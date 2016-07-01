@@ -1,0 +1,156 @@
+
+body {
+    background-color: #f3f3f3;
+    font-family: sans-serif, arial;
+    color: #4e5768;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+
+li {
+    margin: 0;
+    padding: 10px;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+span {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.statSettings {
+    margin: 0 10px;
+    padding: 17px;
+    text-align: center;
+
+}
+
+.main_list {
+    width: 100%;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.main_list > li {
+    display: inline-block;
+    position: relative;
+    font-size: 14px;
+    color: #4e5768;
+    padding: 10px 0 10px 10px;
+    background: #fff;
+    margin: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+    cursor: pointer;
+}
+
+.main_list > li > span {
+    padding: 0 35px 0 1em;
+    background: url(images/periodArrow.png) right center no-repeat #fff;
+}
+
+.prop_list {
+    background-color: white;
+    color: #4e5768;
+    right: 0;
+    position: absolute;
+    z-index: 4;
+    margin-top: 15px;
+    left: 0;
+    border-radius: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    list-style: none;
+    padding: 0px;
+    border: 0;
+    vertical-align: baseline;
+}
+
+.prop_list li:hover {
+    background: #dfeff0; /* Цвет фона */
+}
+
+.periodHeader {
+    font-size: 18px;
+    min-height: 18px;
+    font-weight: 900;
+    margin: 0 auto;
+    width: auto;
+    text-align: center;
+    display: inline-block;
+    position: relative;
+}
+
+
+.preiodArrowWrap {
+    position: absolute;
+    top: 2px;
+    transition: opacity .5s linear;
+}
+
+.preiodArrowWrap.left {
+    border-radius: 8px 0 0 8px;
+    left: -12px;
+}
+
+.preiodArrowWrap.right {
+    border-radius: 0 8px 8px 0;
+    right: -10px;
+}
+
+.periodArrow {
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-top-color: #009ba1;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.periodArrow:hover {
+    margin-top: -1px;
+}
+
+.periodArrow:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: #f3f3f3;
+    display: inline-block;
+    -webkit-transform: translate(-10px, -13px);
+}
+
+
+.periodArrow.left {
+    transform: rotate(90deg) translate(0, 25px);
+}
+
+.periodArrow.right {
+    transform: rotate(270deg) translate(0, 25px);
+}
+
+
+svg {
+    border: 1px solid #dbdbdb;
+}

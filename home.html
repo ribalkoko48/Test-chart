@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Test chart</title>
+    <meta charset="utf-8">
+    <link href="./styles.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- обертка рабочей области -->
+<div class="statSettings">
+
+    <!-- обертка для кнопок -->
+    <ul class="main_list">
+        <!-- кнопка чистки графика в Dom -->
+
+        <li id="period"> Переход:
+            <span>Неделя</span>
+            <ul class="prop_list" style="/* display: none; */">
+                <li data-val="week">Неделя</li>
+                <li data-val="month">Месяц</li>
+                <li data-val="half-year">Полгода</li>
+                <li data-val="year">Год</li>
+            </ul>
+        </li>
+
+
+        <li id="scale">Вид отчета:
+            <span>По неделям</span>
+            <ul class="prop_list" style="display: none;">
+                <li data-val="user">По пользователея</li>
+                <li data-val="bracelet">По браслетам</li>
+            </ul>
+        </li>
+
+
+        <li id="category">Тип данных:
+            <span>Ежедневно</span>
+            <ul class="prop_list" style="display: none;">
+                <li data-val="everyday">Ежедневно</li>
+                <li data-val="swelling">Наростающий</li>
+            </ul>
+        </li>
+
+        <!-- -->
+    </ul>
+
+    <!-- функционал для периода -->
+    <h2 class="periodHeader">
+        <div class="preiodArrowWrap left">
+            <div class="periodArrow left"></div>
+        </div>
+        <span id="date_period">27.06 - 03.07</span>
+        <div class="preiodArrowWrap right">
+            <div class="periodArrow right"></div>
+        </div>
+    </h2>
+    <!-- диаграмма -->
+</div>
+
+<svg class="svgClass" width="1024" height="494" viewBox="0 0 1024 494" xmlns="http://www.w3.org/2000/svg">
+</svg>
+
+<!-- конец рабочей области -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
