@@ -12,11 +12,11 @@
 
     <!-- обертка для кнопок -->
     <ul class="main_list">
-        <!-- кнопка чистки графика в Dom -->
 
-        <li id="period"> Переход:
+
+        <li class="selectType" id="period"> Период:
             <span>Неделя</span>
-            <ul class="prop_list" style="/* display: none; */">
+            <ul class="prop_list" style="display: none;">
                 <li data-val="week">Неделя</li>
                 <li data-val="month">Месяц</li>
                 <li data-val="half-year">Полгода</li>
@@ -25,7 +25,7 @@
         </li>
 
 
-        <li id="scale">Вид отчета:
+        <li class="selectType" id="scale">Вид отчета:
             <span>По неделям</span>
             <ul class="prop_list" style="display: none;">
                 <li data-val="user">По пользователея</li>
@@ -34,7 +34,7 @@
         </li>
 
 
-        <li id="category">Тип данных:
+        <li class="selectType" id="category">Тип данных:
             <span>Ежедневно</span>
             <ul class="prop_list" style="display: none;">
                 <li data-val="everyday">Ежедневно</li>
