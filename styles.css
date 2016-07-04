@@ -3,8 +3,32 @@ body {
     background-color: #f3f3f3;
     font-family: sans-serif, arial;
     color: #4e5768;
+
+}
+.contentWrapper {
+
+    width: 960px;
+    margin: 0 auto;
 }
 
+.col1, .col2, .col3 {
+    width: 30%;
+    float: left;
+}
+
+.checkBox {
+    text-align: left;
+    margin-left: 10px;
+
+}
+
+label {
+   display: block;
+}
+
+.bottomPeriod {
+    text-align: center;
+}
 ul {
     list-style: none;
     margin: 0;
@@ -40,8 +64,8 @@ span {
 .statSettings {
     margin: 0 10px;
     padding: 17px;
-    text-align: center;
-
+    text-align: left;
+    height: 100px;
 }
 
 .main_list {
@@ -50,7 +74,7 @@ span {
     text-align: left;
 }
 
-.main_list > li {
+.selectType {
     display: inline-block;
     position: relative;
     font-size: 14px;
@@ -63,7 +87,7 @@ span {
     cursor: pointer;
 }
 
-.main_list > li > span {
+.selectType > span {
     padding: 0 35px 0 1em;
     background: url(images/periodArrow.png) right center no-repeat #fff;
 }
@@ -83,6 +107,7 @@ span {
     padding: 0px;
     border: 0;
     vertical-align: baseline;
+    display: none;
 }
 
 .prop_list li:hover {
@@ -99,7 +124,6 @@ span {
     display: inline-block;
     position: relative;
 }
-
 
 .preiodArrowWrap {
     position: absolute;
@@ -141,7 +165,6 @@ span {
     -webkit-transform: translate(-10px, -13px);
 }
 
-
 .periodArrow.left {
     transform: rotate(90deg) translate(0, 25px);
 }
@@ -150,7 +173,14 @@ span {
     transform: rotate(270deg) translate(0, 25px);
 }
 
+.svgWrapper{
+    margin: 0 auto;
+}
 
 svg {
     border: 1px solid #dbdbdb;
+}
+
+.active {
+    display: block;
 }

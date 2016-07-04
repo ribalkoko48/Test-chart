@@ -6,46 +6,67 @@
     <link href="./styles.css" rel="stylesheet">
 </head>
 <body>
+<!-- обертка -->
+<div class="contentWrapper">
 
-<!-- обертка рабочей области -->
+
+    <!-- основные кнопки в три колонки -->
 <div class="statSettings">
 
     <!-- обертка для кнопок -->
-    <ul class="main_list">
 
 
-        <li class="selectType" id="period"> Период:
+    <div class="col1">
+        <div class="selectType" id="period"> Период:
             <span>Неделя</span>
-            <ul class="prop_list" style="display: none;">
+            <ul class="prop_list" >
                 <li data-val="week">Неделя</li>
                 <li data-val="month">Месяц</li>
                 <li data-val="half-year">Полгода</li>
                 <li data-val="year">Год</li>
             </ul>
-        </li>
-
-
-        <li class="selectType" id="scale">Вид отчета:
+        </div>
+        <br><br>
+        <form name="data">
+            <span>Дата: с</span>
+            <input type="text" size="5">
+            <span>по</span>
+            <input type="text" size="5">
+        </form>
+    </div>
+    <div class="col2">
+        <div class="selectType" id="scale">Вид отчета:
             <span>По неделям</span>
-            <ul class="prop_list" style="display: none;">
+            <ul class="prop_list">
                 <li data-val="user">По пользователея</li>
                 <li data-val="bracelet">По браслетам</li>
             </ul>
-        </li>
 
-
-        <li class="selectType" id="category">Тип данных:
+        </div>
+        <Br>
+        <div class="checkBox">
+            <label><input type="checkbox" name="option1" value="a1" checked/> Sport</label>
+            <label> <input type="checkbox" name="option2" value="a2">---------<Br></label>
+            <label> <input type="checkbox" name="option3" value="a3">---------<Br></label>
+        </div>
+    </div>
+    <div class="col3">
+        <div class="selectType" id="category">Тип данных:
             <span>Ежедневно</span>
-            <ul class="prop_list" style="display: none;">
+            <ul class="prop_list">
                 <li data-val="everyday">Ежедневно</li>
                 <li data-val="swelling">Наростающий</li>
             </ul>
-        </li>
+        </div>
+    </div>
+    <!-- -->
 
-        <!-- -->
-    </ul>
 
     <!-- функционал для периода -->
+
+</div>
+    <!-- обертка кнопки меню "период" -->
+<div class="bottomPeriod">
     <h2 class="periodHeader">
         <div class="preiodArrowWrap left">
             <div class="periodArrow left"></div>
@@ -55,14 +76,16 @@
             <div class="periodArrow right"></div>
         </div>
     </h2>
-    <!-- диаграмма -->
 </div>
 
-<svg class="svgClass" width="1024" height="494" viewBox="0 0 1024 494" xmlns="http://www.w3.org/2000/svg">
-</svg>
+<!-- диаграмма -->
+<div class="svgWrapper">
+    <svg class="svgClass" height="494" viewBox="0 0 1024 494" xmlns="http://www.w3.org/2000/svg">
+    </svg>
+</div>
 
-<!-- конец рабочей области -->
-
+<!-- конец обертки -->
+</div>
 <script src="script.js"></script>
 
 </body>
