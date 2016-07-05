@@ -5,6 +5,7 @@ body {
     color: #4e5768;
 
 }
+
 .contentWrapper {
 
     width: 960px;
@@ -23,12 +24,13 @@ body {
 }
 
 label {
-   display: block;
+    display: block;
 }
 
 .bottomPeriod {
     text-align: center;
 }
+
 ul {
     list-style: none;
     margin: 0;
@@ -62,7 +64,7 @@ span {
 }
 
 .statSettings {
-    margin: 0 10px;
+    margin: 0 auto;
     padding: 17px;
     text-align: left;
     height: 100px;
@@ -74,7 +76,7 @@ span {
     text-align: left;
 }
 
-.selectType {
+.selectType, #scale {
     display: inline-block;
     position: relative;
     font-size: 14px;
@@ -113,6 +115,7 @@ span {
 .prop_list li:hover {
     background: #dfeff0; /* Цвет фона */
 }
+
 
 .periodHeader {
     font-size: 18px;
@@ -173,8 +176,12 @@ span {
     transform: rotate(270deg) translate(0, 25px);
 }
 
-.svgWrapper{
+.svgWrapper {
     margin: 0 auto;
+}
+
+.disable {
+    display: none;
 }
 
 svg {
@@ -182,5 +189,9 @@ svg {
 }
 
 .active {
+    display: block;
+}
+
+.activeMyDay {
     display: block;
 }
