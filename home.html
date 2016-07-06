@@ -37,7 +37,7 @@
         </div>
         <div class="col2">
             <div class="selectType" id="viewReport">Вид отчета:
-                <span>По неделям</span>
+                <span>По пользователем</span>
                 <ul class="prop_list">
                     <li data-viewReport="user">По пользователем</li>
                     <li data-viewReport="bracelet">По браслетам</li>
@@ -46,16 +46,24 @@
             </div>
             <div class="checkBox" id="braceletModel">
                 <div>
-                    <label><input type="checkbox" name="checkbox1" value="Sport" checked/> Sport</label>
+                    <label><input type="checkbox" value="Sport" checked/>Sport</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" name="checkbox2" value="Life">Life</label>
+                    <label><input type="checkbox" value="Life">Life</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" name="checkbox3" value="Life-01">Life-01</label>
+                    <label><input type="checkbox" value="Life-01">Life-01</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" name="checkbox4" value="Life-05">Life-05</label>
+                    <label><input type="checkbox" value="Life-05">Life-05</label>
+                </div>
+            </div>
+            <div class="checkBoxMenu active" id="userMenu" >
+                <div>
+                    <label><input type="checkbox" value="user" checked/>Пользователи с браслетом</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" value="many_users">Пользователи без браслета</label>
                 </div>
             </div>
         </div>
