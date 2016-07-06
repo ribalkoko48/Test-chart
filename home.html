@@ -36,34 +36,34 @@
             </div>
         </div>
         <div class="col2">
-            <div class="selectType" id="viewReport">Вид отчета:
+            <div class="selectType" id="reportType">Вид отчета:
                 <span>По пользователем</span>
                 <ul class="prop_list">
-                    <li data-viewReport="user">По пользователем</li>
-                    <li data-viewReport="bracelet">По браслетам</li>
+                    <li data-reportType="user">По пользователем</li>
+                    <li data-reportType="bracelet">По браслетам</li>
                 </ul>
 
             </div>
-            <div class="checkBox" id="braceletModel">
+            <div class="checkBox" id="checkboxForBraceletModels">
                 <div>
-                    <label><input type="checkbox" value="Sport" checked/>Sport</label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="Sport" checked/>Sport</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" value="Life">Life</label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="Life">Life</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" value="Life-01">Life-01</label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="Life-01">Life-01</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" value="Life-05">Life-05</label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="Life-05">Life-05</label>
                 </div>
             </div>
-            <div class="checkBoxMenu active" id="userMenu" >
+            <div class="checkBox active" id="checkboxForUsersType" >
                 <div>
-                    <label><input type="checkbox" value="user" checked/>Пользователи с браслетом</label>
+                    <label><input name="usersCheckbox" type="checkbox" value="user" checked/>Пользователи с браслетом</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" value="many_users">Пользователи без браслета</label>
+                    <label><input name="usersCheckbox" type="checkbox" value="many_users">Пользователи без браслета</label>
                 </div>
             </div>
         </div>
@@ -103,6 +103,8 @@
 
     <!-- конец обертки -->
 </div>
+
+<script src="ribalkoJqury.js"></script>
 <script src="script.js"></script>
 
 </body>

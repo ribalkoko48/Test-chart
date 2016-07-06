@@ -1,10 +1,16 @@
 var settings = {
     category: "everyday",
-    braselets: [],
-    users: ["user"],
+    braseletsCheckbox: {
+        isActive: false,
+        activeItems: ['Sport']
+    },
+    usersCheckbox: {
+        isActive: true,
+        activeItems: ['user']
+    },
     date_for: null,
     date_to: null,
-    viewReport: "user",
+    reportType: "user",
     period: "week"
 };
 
@@ -12,28 +18,15 @@ var settings = {
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
 
-
-var mainList = document.querySelectorAll('.selectType');
-
-mainList.forEach(function (element_LI) {
-    element_LI.addEventListener('click', openPropList);
-});
-
-//выбор периода
-var prop_listliAll = document.querySelectorAll('.prop_list li');
-
-prop_listliAll.forEach(function (element_li) {
-
-    element_li.addEventListener('click', handlerPropList)
-
-});
+Rj.setListener('.selectType', 'click', openPropList )
+Rj.setListener('.prop_list li', 'click', handlerPropList )
+Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
 
 
 //закрытие всех окон вне диапазона кнопок
-function closeSelectTypeIfOpen() {
-
-    console.log(settings);
-    var target = event.target;
+function closeSelectTypeIfOpen(e) {
+    console.log(settings)
+    var target = e.target;
 
     if (!target.closest('.selectType')) {
         closeAllPropLists()
@@ -42,7 +35,8 @@ function closeSelectTypeIfOpen() {
 }
 
 function closeAllPropLists() {
-    mainList.forEach(function (item) {
+
+    document.querySelectorAll('.selectType').forEach(function (item) {
         item.querySelector('.prop_list').classList.remove('active');
     })
 }
@@ -70,7 +64,6 @@ function handlerPropList(e) {
     setInSettingsObj(e)
 }
 
-
 // замена подписи на кнопке
 function setPropListValue(e) {
     var selectedText = e.currentTarget.innerHTML,
@@ -88,25 +81,25 @@ function setPropListValue(e) {
             settings.date_to = null;
         }
     }
-    if (selectId == 'viewReport') {
+
+    if (selectId == 'reportType') {
         if (value == 'bracelet') {
-            document.querySelector('.checkBox').classList.add('active')
-            document.querySelector('.checkBoxMenu').classList.remove('active')
-            checkedModelBracelet(e)
+            settings.braseletsCheckbox.isActive = true
+            settings.usersCheckbox.isActive = false
+
+        } else {
+            settings.braseletsCheckbox.isActive = false
+            settings.usersCheckbox.isActive = true
         }
-        else {
-            document.querySelector('.checkBox').classList.remove('active')
-            document.querySelector('.checkBoxMenu').classList.add('active')
-            checkedModelBracelet(e)
-        }
+
+        updateActiveCheckboxInDOM()
+
+        //checkedModelBracelet(e)
     }
 
     e.currentTarget.parentElement.parentElement.querySelector('span').innerHTML = selectedText;
     e.currentTarget.parentElement.classList.remove('active');
 }
-
-// Добавление выбранных элементов в объект
-//
 
 
 function setInSettingsObj(e) {
@@ -123,33 +116,31 @@ function setInSettingsObj(e) {
 
 // Добавление checkbox в разделе "Вид отчета" в объект settings={}
 
-//от клика по любой област "Вид отчета"
-document.querySelector('.col2').addEventListener('click', checkedModelBracelet);
-
-// добавление в объект, в ключ, массив
-function checkedModelBracelet() {
-    //предварительная отчиска массива
-    settings.users = [];
-    settings.braselets = [];
 
 
-//нахождение выделенных checkbox-ов
 
-    //если активный "По пользователям"
-    if (document.querySelector('#userMenu').classList.contains("active")) {
-//добавляет в Obj пользователей
-        var inputAllUser = document.querySelectorAll('#userMenu input:checked');
-        //перебор всех для проверки какие checked
-        inputAllUser.forEach(function (item) {
-            settings.users.push(item.value);
-//если активный "Браслеты"
-        })
+
+
+function changeItemsInActiveCheckbox(e) {
+    //Вариант 1
+    /*var inputName = e.currentTarget.getAttribute('name'),
+        chekedInputs = document.querySelectorAll('input[name=' + inputName + ']:checked');
+
+    settings[inputName].activeItems = []
+
+    chekedInputs.forEach(function(el){
+        settings[inputName].activeItems.push(el.getAttribute('value'))
+    })*/
+
+    //Вариант 2
+    var inputName = e.currentTarget.getAttribute('name');
+    if(e.target.checked){//Удалился или добавлися как чекнутый
+        settings[inputName].activeItems.push(e.target.value)
     } else {
-        //добавляет в Obj браслеты
-        var inputAll = document.querySelectorAll('#braceletModel input:checked');
-        //перебор всех для проверки какие checked
-        inputAll.forEach(function (item) {
-            settings.braselets.push(item.value)
+        settings[inputName].activeItems.forEach(function(item, i , list){
+            if (item === e.target.value){
+                list.splice(i, 1)
+            }
         })
     }
 }
@@ -168,3 +159,66 @@ document.querySelector('.date_to').onchange = function (e) {
     settings[keyObj] = +atrib;
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Добавление выбранных элементов в объект
+//
+function updateActiveCheckboxInDOM(){
+
+    if(settings.braseletsCheckbox.isActive){
+        document.querySelector('#checkboxForBraceletModels').classList.add('active')
+    } else {
+        document.querySelector('#checkboxForBraceletModels').classList.remove('active')
+    }
+
+    if(settings.usersCheckbox.isActive){
+        document.querySelector('#checkboxForUsersType').classList.add('active')
+    } else {
+        document.querySelector('#checkboxForUsersType').classList.remove('active')
+    }
+
+}
