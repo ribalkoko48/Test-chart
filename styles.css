@@ -83,7 +83,6 @@ span {
     color: #4e5768;
     padding: 10px 0 10px 10px;
     background: #fff;
-    margin: 5px 10px;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, .1);
     cursor: pointer;
@@ -180,18 +179,21 @@ span {
     margin: 0 auto;
 }
 
-.disable {
+.datePeriod {
     display: none;
 }
+
+.datePeriod.active {
+    display: block;
+}
+
+
+
 
 svg {
     border: 1px solid #dbdbdb;
 }
 
 .active {
-    display: block;
-}
-
-.activeMyDay {
     display: block;
 }

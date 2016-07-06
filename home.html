@@ -24,11 +24,11 @@
                     <li data-period="month">Месяц</li>
                     <li data-period="half-year">Полгода</li>
                     <li data-period="year">Год</li>
-                    <li data-period="disable">Мой период</li>
+                    <li data-period="custom">Выборочно</li>
                 </ul>
             </div>
             <br><br>
-            <div class="disable">
+            <div class="datePeriod">
                 <span>Дата: с</span>
                 <input type="text" class="date_for" size="5">
                 <span>по</span>
@@ -39,25 +39,24 @@
             <div class="selectType" id="scale">Вид отчета:
                 <span>По неделям</span>
                 <ul class="prop_list">
-                    <li data-scale="user">По пользователея</li>
+                    <li data-scale="user">По пользователем</li>
                     <li data-scale="bracelet">По браслетам</li>
                 </ul>
 
             </div>
-            <Br>
             <div class="checkBox" id="braceletModel">
-                <label>
-                    <input type="checkbox" name="checkbox1" value="Sport" checked/> Sport
-                </label>
-                <label>
-                    <input type="checkbox" name="checkbox2" value="Life">Life
-                    <Br></label>
-                <label>
-                    <input type="checkbox" name="checkbox3" value="Life-01">Life-01
-                    <Br></label>
-                <label>
-                    <input type="checkbox" name="checkbox4" value="Life-05">Life-05
-                    <Br></label>
+                <div>
+                    <label><input type="checkbox" name="checkbox1" value="Sport" checked/> Sport</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="checkbox2" value="Life">Life</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="checkbox3" value="Life-01">Life-01</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="checkbox4" value="Life-05">Life-05</label>
+                </div>
             </div>
         </div>
         <div class="col3">

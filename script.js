@@ -1,4 +1,11 @@
-var settings = {};
+var settings = {
+    category: "everyday",
+    checkbox: ['sport', 'life'],
+    date_for: null,
+    date_to: null,
+    period: "disable",
+    scale: "user"
+};
 
 
 //закрытие ранее отрытых выпадающих окон
@@ -16,7 +23,7 @@ var prop_listliAll = document.querySelectorAll('.prop_list li');
 
 prop_listliAll.forEach(function (element_li) {
 
-    element_li.addEventListener('click', setPropListValue)
+    element_li.addEventListener('click', handlerPropList)
 
 })
 
@@ -53,39 +60,42 @@ function openPropList() {
 
 }
 
+function handlerPropList(e) {
+    e.stopPropagation()
+
+    setPropListValue(e)
+    setInSettingsObj(e)
+}
+
 // замена подписи на кнопке
 function setPropListValue(e) {
-    var selectedValue = e.currentTarget.innerHTML,
-        value = e.currentTarget.getAttribute('data-period');
+    var selectedText = e.currentTarget.innerHTML,
+        selectId = e.target.parentElement.parentElement.id,
+        value = e.currentTarget.getAttribute('data-' + selectId);
 
-    //если выбран пункт "мой период"
-    if (value == 'disable') {
-        document.querySelector('.disable').classList.add('activeMyDay')
-    }
-var attr = e.target.getAttribute('data-period');
-    if (attr == 'week'|| attr == 'month'|| attr == 'half-year' || attr == 'year') {
-
-        document.querySelector('.disable').classList.remove('activeMyDay')
-           settings.date_for = null;
+    //если клик по периоду и если выбран пункт "выбочрочно"
+    if (selectId == 'period') {
+        if (value == 'custom') {
+            document.querySelector('.datePeriod').classList.add('active')
+        }
+        else {
+            document.querySelector('.datePeriod').classList.remove('active')
+            settings.date_for = null;
             settings.date_to = null;
+        }
     }
 
-    this.parentElement.parentElement.querySelector('span').innerHTML = selectedValue;
-    this.parentElement.classList.remove('active');
+    
 
-
-    e.stopPropagation()
+    e.currentTarget.parentElement.parentElement.querySelector('span').innerHTML = selectedText;
+    e.currentTarget.parentElement.classList.remove('active');
 }
 
 // Добавление выбранных элементов в объект
 //
 
-//находим все li + обработчик
-document.querySelectorAll('.prop_list li').forEach(function (select_il) {
-    select_il.addEventListener('click', setEventAnObject)
-})
 
-function setEventAnObject(e) {
+function setInSettingsObj(e) {
     // название выбранного свойства
     var keyObj = e.target.parentElement.parentElement.id;
 // назване атрибута выбранного элемента
@@ -96,7 +106,7 @@ function setEventAnObject(e) {
     settings[keyObj] = valueProperty;
 
 //содержимое объекта
-   // console.log(settings)
+    // console.log(settings)
 
 }
 
@@ -107,7 +117,7 @@ document.querySelector('body').addEventListener('click', checkedModelBracelet);
 
 function checkedModelBracelet() {
     //содержимое объекта
-   console.log(settings)
+    console.log(settings)
     //берем все input в области
     document.querySelectorAll('#braceletModel input').forEach(function (item) {
         //кто выделен = добавляем
@@ -121,8 +131,8 @@ function checkedModelBracelet() {
             atrib = null;
             keyObj = item.getAttribute('name');
             settings[keyObj] = atrib;
-             /*//содержимое объекта
-   console.log(settings)*/
+            /*//содержимое объекта
+             console.log(settings)*/
         }
     })
 
