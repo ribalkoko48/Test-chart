@@ -76,7 +76,7 @@ span {
     text-align: left;
 }
 
-.selectType, #scale {
+.selectType, #viewReport {
     display: inline-block;
     position: relative;
     font-size: 14px;
@@ -179,11 +179,11 @@ span {
     margin: 0 auto;
 }
 
-.datePeriod {
+.datePeriod, .checkBox{
     display: none;
 }
 
-.datePeriod.active {
+.datePeriod.active, .checkBox.active {
     display: block;
 }
 

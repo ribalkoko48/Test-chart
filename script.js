@@ -1,12 +1,12 @@
 var settings = {
     category: "everyday",
-    checkbox: ['sport', 'life'],
+    braselets: ['sport', 'life'],
     date_for: null,
     date_to: null,
     period: "disable",
-    scale: "user"
+    viewReport: "user"
 };
-
+var arr = [];
 
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
@@ -30,12 +30,14 @@ prop_listliAll.forEach(function (element_li) {
 
 //закрытие всех окон вне диапазона кнопок
 function closeSelectTypeIfOpen() {
+    console.log(arr)
+    console.log(settings)
     var target = event.target;
 
     if (!target.closest('.selectType')) {
         closeAllPropLists()
     }
-    //  console.log(settings)
+
 }
 
 function closeAllPropLists() {
@@ -84,8 +86,19 @@ function setPropListValue(e) {
             settings.date_to = null;
         }
     }
+    if (selectId == 'viewReport') {
+        if (value == 'bracelet') {
+            document.querySelector('.checkBox').classList.add('active')
+            checkedModelBracelet(e)
+        }
+        else {
+            document.querySelector('.checkBox').classList.remove('active')
+            settings.braselets = [];
+        }
 
-    
+
+    }
+
 
     e.currentTarget.parentElement.parentElement.querySelector('span').innerHTML = selectedText;
     e.currentTarget.parentElement.classList.remove('active');
@@ -105,38 +118,33 @@ function setInSettingsObj(e) {
 //внесение выбранных элементов в объект (ключ(propertyObj) : значение(valueProperty))
     settings[keyObj] = valueProperty;
 
-//содержимое объекта
-    // console.log(settings)
-
 }
 
 // Добавление checkbox в объект
 
-//обработчик для  checkbox на body (Что не сделай, checkbox отразится в объекте)
-document.querySelector('body').addEventListener('click', checkedModelBracelet);
+//от клика по checkbox запуск вычислений
+document.querySelector('#braceletModel').addEventListener('click', checkedModelBracelet);
 
+// добавление в объект, в ключ, массив
 function checkedModelBracelet() {
-    //содержимое объекта
-    console.log(settings)
-    //берем все input в области
-    document.querySelectorAll('#braceletModel input').forEach(function (item) {
-        //кто выделен = добавляем
+    //предварительная отчиска массива
+    settings.braselets = [];
+//нахождение всех инпутов
+    var inputAll = document.querySelectorAll('#braceletModel input');
+    //перебор всех для проверки какие checked
+    inputAll.forEach(function (item) {
+       //если выделен
         if (item.checked == true) {
-            var atrib = item.getAttribute('value');
-            var keyObj = item.getAttribute('name');
-            settings[keyObj] = atrib;
 
-//кто не выделен = false
-        } else {
-            atrib = null;
-            keyObj = item.getAttribute('name');
-            settings[keyObj] = atrib;
-            /*//содержимое объекта
-             console.log(settings)*/
+            var braselet = item.value
+            settings.braselets.push(braselet)
+
         }
+
     })
 
 }
+
 
 //Добавление в объект ручного ввода периода даты
 
