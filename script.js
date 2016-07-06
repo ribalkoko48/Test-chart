@@ -130,17 +130,10 @@ function checkedModelBracelet() {
     //предварительная отчиска массива
     settings.braselets = [];
 //нахождение всех инпутов
-    var inputAll = document.querySelectorAll('#braceletModel input');
+    var inputAll = document.querySelectorAll('#braceletModel input:checked');
     //перебор всех для проверки какие checked
     inputAll.forEach(function (item) {
-       //если выделен
-        if (item.checked == true) {
-
-            var braselet = item.value
-            settings.braselets.push(braselet)
-
-        }
-
+        settings.braselets.push(item.value)
     })
 
 }
