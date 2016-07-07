@@ -8,7 +8,7 @@ var settings = {
         isActive: true,
         activeItems: ['user']
     },
-    date_for: null,
+    date_from: null,
     date_to: null,
     reportType: "user",
     period: "week"
@@ -18,8 +18,8 @@ var settings = {
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
 
-Rj.setListener('.selectType', 'click', openPropList )
-Rj.setListener('.prop_list li', 'click', handlerPropList )
+Rj.setListener('.selectType', 'click', openPropList)
+Rj.setListener('.prop_list li', 'click', handlerPropList)
 Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
 
 
@@ -62,6 +62,7 @@ function handlerPropList(e) {
 
     setPropListValue(e);
     setInSettingsObj(e)
+
 }
 
 // замена подписи на кнопке
@@ -76,25 +77,22 @@ function setPropListValue(e) {
             document.querySelector('.datePeriod').classList.add('active')
         }
         else {
-            document.querySelector('.datePeriod').classList.remove('active')
-            settings.date_for = null;
-            settings.date_to = null;
+            document.querySelector('.datePeriod').classList.remove('active');
         }
     }
 
     if (selectId == 'reportType') {
         if (value == 'bracelet') {
-            settings.braseletsCheckbox.isActive = true
+            settings.braseletsCheckbox.isActive = true;
             settings.usersCheckbox.isActive = false
 
         } else {
-            settings.braseletsCheckbox.isActive = false
+            settings.braseletsCheckbox.isActive = false;
             settings.usersCheckbox.isActive = true
         }
 
-        updateActiveCheckboxInDOM()
+        updateActiveCheckboxInDOM();
 
-        //checkedModelBracelet(e)
     }
 
     e.currentTarget.parentElement.parentElement.querySelector('span').innerHTML = selectedText;
@@ -112,43 +110,31 @@ function setInSettingsObj(e) {
 //внесение выбранных элементов в объект (ключ(propertyObj) : значение(valueProperty))
     settings[keyObj] = valueProperty;
 
+    if (keyObj == 'period') {
+        set_DateFrom_setDateTo_In_Settings()
+    }
+
 }
 
 // Добавление checkbox в разделе "Вид отчета" в объект settings={}
 
 
-
-
-
-
 function changeItemsInActiveCheckbox(e) {
-    //Вариант 1
-    /*var inputName = e.currentTarget.getAttribute('name'),
+
+    var inputName = e.currentTarget.getAttribute('name'),
         chekedInputs = document.querySelectorAll('input[name=' + inputName + ']:checked');
 
-    settings[inputName].activeItems = []
+    settings[inputName].activeItems = [];
 
-    chekedInputs.forEach(function(el){
+    chekedInputs.forEach(function (el) {
         settings[inputName].activeItems.push(el.getAttribute('value'))
-    })*/
-
-    //Вариант 2
-    var inputName = e.currentTarget.getAttribute('name');
-    if(e.target.checked){//Удалился или добавлися как чекнутый
-        settings[inputName].activeItems.push(e.target.value)
-    } else {
-        settings[inputName].activeItems.forEach(function(item, i , list){
-            if (item === e.target.value){
-                list.splice(i, 1)
-            }
-        })
-    }
+    })
 }
 
 
 //Добавление в объект ручного ввода периода даты
 
-document.querySelector('.date_for').onchange = function (e) {
+document.querySelector('.date_from').onchange = function (e) {
     keyObj = e.target.className;
     atrib = e.target.value;
     settings[keyObj] = +atrib;
@@ -161,64 +147,52 @@ document.querySelector('.date_to').onchange = function (e) {
 };
 
 
+function set_DateFrom_setDateTo_In_Settings() {
+
+    var periodChecked = settings.period;
+
+    var dateFrom = new Date(),
+        dateTo = new Date();
+
+    switch (periodChecked) {
+        case 'week':
+            var todayNumberDay = dateFrom.getDay();
+
+            dateFrom.setDate(dateFrom.getDate() - (todayNumberDay - 1));
+            dateTo.setDate(dateFrom.getDate() + 6)
+            break;
+        case 'month':
+            dateFrom.setDate(1);
+            dateTo.setDate( Rj.getDaysInMonth(dateFrom) )
+
+            break;
+        case 5:
+            alert('Перебор');
+            break;
 
 
+    }
+    settings.date_from = dateFrom;
+    settings.date_to = dateTo;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 // Добавление выбранных элементов в объект
 //
-function updateActiveCheckboxInDOM(){
+function updateActiveCheckboxInDOM() {
 
-    if(settings.braseletsCheckbox.isActive){
+    if (settings.braseletsCheckbox.isActive) {
         document.querySelector('#checkboxForBraceletModels').classList.add('active')
     } else {
         document.querySelector('#checkboxForBraceletModels').classList.remove('active')
     }
 
-    if(settings.usersCheckbox.isActive){
+    if (settings.usersCheckbox.isActive) {
         document.querySelector('#checkboxForUsersType').classList.add('active')
     } else {
         document.querySelector('#checkboxForUsersType').classList.remove('active')
     }
 
 }
+
