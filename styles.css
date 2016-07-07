@@ -18,9 +18,9 @@ body {
 }
 
 .checkBox {
+    display: none;
     text-align: left;
     margin-left: 10px;
-
 }
 
 label {
@@ -179,12 +179,8 @@ span {
     margin: 0 auto;
 }
 
-.datePeriod, .checkBox, .checkBoxMenu {
+.datePeriod {
     display: none;
-}
-
-.datePeriod.active, .checkBox.active, .checkBoxMenu.active {
-    display: block;
 }
 
 
