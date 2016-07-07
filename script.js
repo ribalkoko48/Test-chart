@@ -13,7 +13,7 @@ var settings = {
     reportType: "user",
     period: "week"
 };
-
+sldkfjlksdj
 
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
