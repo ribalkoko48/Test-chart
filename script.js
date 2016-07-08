@@ -8,12 +8,11 @@ var settings = {
         isActive: true,
         activeItems: ['user']
     },
-    date_from: null,
-    date_to: null,
+
     reportType: "user",
     period: "week"
 };
-sldkfjlksdj
+
 
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
@@ -134,7 +133,7 @@ function changeItemsInActiveCheckbox(e) {
 
 //Добавление в объект ручного ввода периода даты
 
-document.querySelector('.date_from').onchange = function (e) {
+/*document.querySelector('.date_from').onchange = function (e) {
     keyObj = e.target.className;
     atrib = e.target.value;
     settings[keyObj] = +atrib;
@@ -144,9 +143,9 @@ document.querySelector('.date_to').onchange = function (e) {
     atrib = e.target.value;
     settings[keyObj] = +atrib;
 
-};
+};*/
 
-
+// Добавление объекта даты (date_from и date_to)в settings
 function set_DateFrom_setDateTo_In_Settings() {
 
     var periodChecked = settings.period;
@@ -159,19 +158,45 @@ function set_DateFrom_setDateTo_In_Settings() {
             var todayNumberDay = dateFrom.getDay();
 
             dateFrom.setDate(dateFrom.getDate() - (todayNumberDay - 1));
-            dateTo.setDate(dateFrom.getDate() + 6)
+            dateTo.setDate(dateFrom.getDate() + 6);
+
             break;
         case 'month':
             dateFrom.setDate(1);
-            dateTo.setDate( Rj.getDaysInMonth(dateFrom) )
+            dateTo.setDate(Rj.getDaysInMonth(dateFrom))
 
             break;
-        case 5:
-            alert('Перебор');
+        case 'half-year':
+            dateFrom.setMonth(0, 1);
+            dateTo.setMonth(6, -0);
+
+            break;
+        case 'year':
+            dateFrom.setMonth(0, 1);
+            dateTo.setFullYear(dateTo.getFullYear() + 1, 0, -0);
+
             break;
 
+        case 'custom':
 
+document.querySelector('.date_from').onchange = function (e) {
+    keyObj = e.target.className;
+    atrib = +e.target.value;
+    console.log(atrib)
+};
+document.querySelector('.date_to').onchange = function (e) {
+    keyObj = e.target.className;
+    atrib = +e.target.value;
+    console.log(atrib)
+
+};
+
+            break;
     }
+    //  ?? // Я бы не поставил вставление в это место, формируются даты сразу по нажатию на кнопку.
+    // я бы поставил после каждого switch / case
+
+    //вставляем в значения в setings
     settings.date_from = dateFrom;
     settings.date_to = dateTo;
 
