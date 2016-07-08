@@ -20,6 +20,33 @@ window.addEventListener('click', closeSelectTypeIfOpen);
 Rj.setListener('.selectType', 'click', openPropList)
 Rj.setListener('.prop_list li', 'click', handlerPropList)
 Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
+Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
+
+/*
+Задача если вдруг ты вундыркинд и сделал все проверки
+сделать так чтобы по стрелочкам влево вправо менялся период с ооответствующим интервалом
+неделя/месяц/год и тд
+
+ */
+
+
+//ОБРАБОТЧИК НА БЛЮР ИНПУТОВ С ДАТОЙ - ПРОВЕРКА ПРАВИЛЬНОСТИ ВВОДА показ сообщений запись в settings 
+
+set_DateFrom_setDateTo_In_Settings();
+
+
+function checkAndSaveDates(){
+
+    //Реализовать проверки
+
+    //Создать в html <p> и показывать ее и определенный текст ошибки вставлять
+    //Ясень пень если все гуд сообщалку срыть
+
+    //Если все гуд - создать - записать объект дата в соответствующее свойство setting
+    //Обновить даты в периоде
+
+
+}
 
 
 //закрытие всех окон вне диапазона кнопок
@@ -110,7 +137,8 @@ function setInSettingsObj(e) {
     settings[keyObj] = valueProperty;
 
     if (keyObj == 'period') {
-        set_DateFrom_setDateTo_In_Settings()
+
+       set_DateFrom_setDateTo_In_Settings()
     }
 
 }
@@ -131,20 +159,6 @@ function changeItemsInActiveCheckbox(e) {
 }
 
 
-//Добавление в объект ручного ввода периода даты
-
-/*document.querySelector('.date_from').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = e.target.value;
-    settings[keyObj] = +atrib;
-};
-document.querySelector('.date_to').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = e.target.value;
-    settings[keyObj] = +atrib;
-
-};*/
-
 // Добавление объекта даты (date_from и date_to)в settings
 function set_DateFrom_setDateTo_In_Settings() {
 
@@ -159,6 +173,7 @@ function set_DateFrom_setDateTo_In_Settings() {
 
             dateFrom.setDate(dateFrom.getDate() - (todayNumberDay - 1));
             dateTo.setDate(dateFrom.getDate() + 6);
+            console.log(dateTo.getDate())
 
             break;
         case 'month':
@@ -176,22 +191,12 @@ function set_DateFrom_setDateTo_In_Settings() {
             dateTo.setFullYear(dateTo.getFullYear() + 1, 0, -0);
 
             break;
+         case 'custom':
+             Rj.formatDate(settings.date_from)
+             Rj.$('.date_from').value = Rj.formatDate(settings.date_from)
+             Rj.$('.date_to').value = Rj.formatDate(settings.date_to)
 
-        case 'custom':
-
-document.querySelector('.date_from').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = +e.target.value;
-    console.log(atrib)
-};
-document.querySelector('.date_to').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = +e.target.value;
-    console.log(atrib)
-
-};
-
-            break;
+            return
     }
     //  ?? // Я бы не поставил вставление в это место, формируются даты сразу по нажатию на кнопку.
     // я бы поставил после каждого switch / case
@@ -199,6 +204,8 @@ document.querySelector('.date_to').onchange = function (e) {
     //вставляем в значения в setings
     settings.date_from = dateFrom;
     settings.date_to = dateTo;
+
+    Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
 
 }
 
@@ -220,4 +227,5 @@ function updateActiveCheckboxInDOM() {
     }
 
 }
+
 
