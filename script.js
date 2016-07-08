@@ -21,10 +21,11 @@ Rj.setListener('.selectType', 'click', openPropList)
 Rj.setListener('.prop_list li', 'click', handlerPropList)
 Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
 
+set_DateFrom_setDateTo_In_Settings()
 
 //закрытие всех окон вне диапазона кнопок
 function closeSelectTypeIfOpen(e) {
-    console.log(settings)
+
     var target = e.target;
 
     if (!target.closest('.selectType')) {
@@ -168,28 +169,16 @@ function set_DateFrom_setDateTo_In_Settings() {
             break;
         case 'half-year':
             dateFrom.setMonth(0, 1);
-            dateTo.setMonth(6, -0);
+            dateTo.setMonth(6, 0);
 
             break;
         case 'year':
             dateFrom.setMonth(0, 1);
-            dateTo.setFullYear(dateTo.getFullYear() + 1, 0, -0);
+            dateTo.setFullYear(dateTo.getFullYear() + 1, 0, 0);
 
             break;
 
         case 'custom':
-
-document.querySelector('.date_from').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = +e.target.value;
-    console.log(atrib)
-};
-document.querySelector('.date_to').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = +e.target.value;
-    console.log(atrib)
-
-};
 
             break;
     }
