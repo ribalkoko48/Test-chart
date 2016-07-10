@@ -179,7 +179,7 @@ span {
     margin: 0 auto;
 }
 
-.datePeriod {
+.datePeriod, .correctionDate {
     display: none;
 }
 

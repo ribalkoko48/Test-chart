@@ -23,9 +23,9 @@ Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
 Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
 
 /*
-Задача если вдруг ты вундыркинд и сделал все проверки
-сделать так чтобы по стрелочкам влево вправо менялся период с ооответствующим интервалом
-неделя/месяц/год и тд
+ Задача если вдруг ты вундыркинд и сделал все проверки
+ сделать так чтобы по стрелочкам влево вправо менялся период с ооответствующим интервалом
+ неделя/месяц/год и тд
 
  */
 
@@ -35,11 +35,57 @@ Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
 set_DateFrom_setDateTo_In_Settings();
 
 
-function checkAndSaveDates(){
+function checkAndSaveDates() {
+    var number = Rj.$('.date_from').value;
+    var arrDate = number.split('.' || ',' || ':' || '-' || ';' || '/');
+
+
+    console.log();
+    var year;
+    var month;
+    var day;
+    arrDate.forEach(function (iteam, i) {
+        var date = new Date();
+
+        if (!isNaN(iteam)) {
+
+
+            if (i == 0) {
+                if (iteam.length == 4) {
+
+                    year = iteam;
+                    console.log('первое прошло');
+                }
+
+            }
+        }
+
+
+        if (i == 1) {
+            if (iteam.length == 2) {
+                console.log('второе прошло');
+                month = iteam;
+            }
+
+        }
+        if (i == 2) {
+            if (iteam.length == 2) {
+                console.log('третее тоже норм');
+                day = iteam;
+            }
+
+        }
+        //else {
+        //    Rj.$('.correctionDate').classList.add('active')
+        //    console.log('error. Пробуй еще')
+        //}
+
+        console.log('год:' + year + ', месяц:' + month + ' день, ' + day);
+    })
 
     //Реализовать проверки
 
-    //Создать в html <p> и показывать ее и определенный текст ошибки вставлять
+
     //Ясень пень если все гуд сообщалку срыть
 
     //Если все гуд - создать - записать объект дата в соответствующее свойство setting
@@ -138,7 +184,7 @@ function setInSettingsObj(e) {
 
     if (keyObj == 'period') {
 
-       set_DateFrom_setDateTo_In_Settings()
+        set_DateFrom_setDateTo_In_Settings()
     }
 
 }
@@ -173,7 +219,7 @@ function set_DateFrom_setDateTo_In_Settings() {
 
             dateFrom.setDate(dateFrom.getDate() - (todayNumberDay - 1));
             dateTo.setDate(dateFrom.getDate() + 6);
-            console.log(dateTo.getDate())
+            //console.log(dateTo.getDate())
 
             break;
         case 'month':
@@ -191,15 +237,13 @@ function set_DateFrom_setDateTo_In_Settings() {
             dateTo.setFullYear(dateTo.getFullYear() + 1, 0, -0);
 
             break;
-         case 'custom':
-             Rj.formatDate(settings.date_from)
-             Rj.$('.date_from').value = Rj.formatDate(settings.date_from)
-             Rj.$('.date_to').value = Rj.formatDate(settings.date_to)
+        case 'custom':
+            Rj.formatDate(settings.date_from)
+            Rj.$('.date_from').value = Rj.formatDate(settings.date_from)
+            Rj.$('.date_to').value = Rj.formatDate(settings.date_to)
 
             return
     }
-    //  ?? // Я бы не поставил вставление в это место, формируются даты сразу по нажатию на кнопку.
-    // я бы поставил после каждого switch / case
 
     //вставляем в значения в setings
     settings.date_from = dateFrom;
