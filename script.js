@@ -1,20 +1,24 @@
 "use strict";
 
 
+var data;
+
 var settings = {
-    category: "everyday",
+    category: "every_day",
     braseletsCheckbox: {
         isActive: false,
         activeItems: ['Sport']
     },
     usersCheckbox: {
         isActive: true,
-        activeItems: ['user']
+        activeItems: ['with_devices'] //without_devices
     },
 
     reportType: "user",
     period: "week"
 };
+
+
 
 
 //закрытие ранее отрытых выпадающих окон
@@ -27,6 +31,8 @@ Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
 Rj.setListener('.periodArrowWrap', 'click', H1_Button_ChangePeriod)
 
 set_DateFrom_setDateTo_In_Settings();
+
+getDataFromServer()
 
 
 function checkAndSaveDates(e) {
@@ -317,6 +323,39 @@ function updateActiveCheckboxInDOM() {
 
 }
 
+function getDataFromServer(){
+
+    var xhr = new XMLHttpRequest();
+
+    var url = 'http://localhost:8008/reports/api/v1/user_analysis_report_data?&date_from=05.01.2016&date_to=11.05.2016&tz_seconds=10800&format=json';
+
+    xhr.onreadystatechange = function() {
+        if (this.readyState != 4) return;
+
+        // по окончании запроса доступны:
+        // status, statusText
+        // responseText, responseXML (при content-type: text/xml)
+
+        if (this.status != 200) {
+            // обработать ошибку
+            console.eroor( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+            return;
+        }
+
+        data = JSON.parse(this.response).result
+
+        console.log(data)
+
+        redrawChart()
+    }
 
 
+    xhr.open('GET', url, true);
 
+    xhr.send();
+}
+
+
+function redrawChart(){
+    console.log('рисуем график по данным и по выбранным сетингам')
+}
