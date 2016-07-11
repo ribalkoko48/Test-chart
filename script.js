@@ -110,7 +110,6 @@ function H1_Button_ChangePeriod() {
     }
     else {
         znak = '-1';
-
     }
 
 
