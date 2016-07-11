@@ -1,5 +1,7 @@
 var Rj = {
-
+    $ : function(css){
+      return document.querySelector(css)
+    },
     /*
      * Принимает объект даты
      * Возвращает число количество дней в месяце
@@ -27,6 +29,15 @@ var Rj = {
         })
 
         return allElements;
+    },
+    
+    formatDate: function(date){
+        return date.getFullYear() + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt( date.getDate())
+    },
+
+    parseInt: function(num){
+        //если число меньше десяти добавить нолик впереди а если нет то вернуть как есть
+        return num < 10 ? '0' + num : num
     }
 
 };

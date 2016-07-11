@@ -17,15 +17,161 @@ var settings = {
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
 
-Rj.setListener('.selectType', 'click', openPropList)
-Rj.setListener('.prop_list li', 'click', handlerPropList)
+Rj.setListener('.selectType', 'click', openPropList);
+Rj.setListener('.prop_list li', 'click', handlerPropList);
 Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
+Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
+Rj.setListener('.preiodArrowWrap', 'click', H1_Button_ChangePeriod)
 
-set_DateFrom_setDateTo_In_Settings()
+
+/*
+ Задача если вдруг ты вундыркинд и сделал все проверки
+ сделать так чтобы по стрелочкам влево вправо менялся период с ооответствующим интервалом
+ неделя/месяц/год и тд
+
+ */
+
+
+//ОБРАБОТЧИК НА БЛЮР ИНПУТОВ С ДАТОЙ - ПРОВЕРКА ПРАВИЛЬНОСТИ ВВОДА показ сообщений запись в settings
+
+set_DateFrom_setDateTo_In_Settings();
+
+
+function checkAndSaveDates() {
+
+    var number;
+    var year;
+    var month;
+    var day;
+    var checkedDate = event.target.classList.value;
+
+    if (checkedDate === 'date_from') {
+        number = Rj.$('.date_from').value;
+    }
+    else {
+        number = Rj.$('.date_to').value;
+    }
+
+    var arrDateFrom = number.split('.');
+
+
+//Перебор изменяемого элемента в "Моя Дата"
+    arrDateFrom.forEach(function (iteam, i) {
+        var date = new Date();
+//проверка число или нет
+        if (!isNaN(iteam)) {
+// проверка год
+            if (i == 0) {
+                if (iteam.length == 4) {
+                    if (iteam <= date.getFullYear()) {
+                        year = iteam;
+                    }
+                }
+            }
+//проверка месяц
+            if (i == 1) {
+                if (iteam.length == 2) {
+                    if (iteam <= 12 && iteam > 0) {
+                        month = iteam;
+                    }
+                }
+            }
+//проверка день
+            if (i == 2) {
+                if (iteam.length == 2) {
+                    if (iteam <= 31 && iteam > 0) {
+                        day = iteam;
+                    }
+                }
+            }
+        }
+// если чего-то нет
+        if (year === undefined || month === undefined || day === undefined) {
+            Rj.$('.correctionDate').classList.add('active')
+        }
+        //если все хорошо, убираем подсказку и вложение в settings
+        else {
+            Rj.$('.correctionDate').classList.remove('active');
+            var settingDate = new Date(year, month, day)
+            settings[checkedDate] = settingDate;
+        }
+    })
+
+}
+
+function H1_Button_ChangePeriod() {
+
+//смотрим какая кнопка нажата
+    var znak;
+    var leftOrRightButton = event.target.classList.value;
+
+    if (leftOrRightButton == 'periodArrow right') {
+        znak = '1';
+    }
+    else {
+        znak = '-1';
+    }
+
+
+// определение нынешнего периода
+
+    if (settings.period == 'week') {
+        var date_from = settings.date_from;
+        var date_to = settings.date_to;
+        date_from.setDate(date_from.getDate() + (znak * 7))
+        date_to.setDate(date_to.getDate() + (znak * 7))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+    }
+    else if (settings.period == 'month') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setMonth(date_from.getMonth() + (znak * 1))
+        //доделать последний день месяца
+        var month = date_from.getMonth()
+        date_to.setMonth(month, Rj.getDaysInMonth(date_from))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+    }
+    else if (settings.period == 'half-year') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setMonth(date_from.getMonth() + (znak * 6))
+        var month = date_from.getMonth()
+        month += znak * 6;
+        date_to.setMonth(month, Rj.getDaysInMonth(date_from))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+
+
+    }
+    else if (settings.period == 'year') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setFullYear(date_from.getFullYear() + (znak * 1))
+        date_to.setFullYear(date_to.getFullYear() + (znak * 1))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+        console.info('Начальный период')
+        console.log(date_from.getFullYear())
+        console.log(date_from.getMonth())
+        console.log(date_from.getDate())
+
+        console.info('конец')
+        console.log(date_to.getFullYear())
+        console.log(date_to.getMonth())
+        console.log(date_to.getDate())
+    }
+    else {
+        console.info('Что тут делать?')
+    }
+
+
+// выбираем число изменений периода
+
+
+    //конец функции
+}
 
 //закрытие всех окон вне диапазона кнопок
 function closeSelectTypeIfOpen(e) {
-
+    console.log(settings)
     var target = e.target;
 
     if (!target.closest('.selectType')) {
@@ -111,6 +257,7 @@ function setInSettingsObj(e) {
     settings[keyObj] = valueProperty;
 
     if (keyObj == 'period') {
+
         set_DateFrom_setDateTo_In_Settings()
     }
 
@@ -131,20 +278,6 @@ function changeItemsInActiveCheckbox(e) {
     })
 }
 
-
-//Добавление в объект ручного ввода периода даты
-
-/*document.querySelector('.date_from').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = e.target.value;
-    settings[keyObj] = +atrib;
-};
-document.querySelector('.date_to').onchange = function (e) {
-    keyObj = e.target.className;
-    atrib = e.target.value;
-    settings[keyObj] = +atrib;
-
-};*/
 
 // Добавление объекта даты (date_from и date_to)в settings
 function set_DateFrom_setDateTo_In_Settings() {
@@ -169,25 +302,27 @@ function set_DateFrom_setDateTo_In_Settings() {
             break;
         case 'half-year':
             dateFrom.setMonth(0, 1);
-            dateTo.setMonth(6, 0);
+            dateTo.setMonth(6, -0);
 
             break;
         case 'year':
             dateFrom.setMonth(0, 1);
-            dateTo.setFullYear(dateTo.getFullYear() + 1, 0, 0);
+            dateTo.setFullYear(dateTo.getFullYear() + 1, 0, -0);
 
             break;
-
         case 'custom':
+            Rj.formatDate(settings.date_from)
+            Rj.$('.date_from').value = Rj.formatDate(settings.date_from)
+            Rj.$('.date_to').value = Rj.formatDate(settings.date_to)
 
-            break;
+            return
     }
-    //  ?? // Я бы не поставил вставление в это место, формируются даты сразу по нажатию на кнопку.
-    // я бы поставил после каждого switch / case
 
     //вставляем в значения в setings
     settings.date_from = dateFrom;
     settings.date_to = dateTo;
+
+    Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
 
 }
 
@@ -209,4 +344,5 @@ function updateActiveCheckboxInDOM() {
     }
 
 }
+
 
