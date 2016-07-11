@@ -66,6 +66,7 @@ span {
 .statSettings {
     margin: 0 auto;
     padding: 17px;
+    padding-bottom: 100px;
     text-align: left;
     height: 100px;
 }
@@ -181,8 +182,19 @@ span {
 
 .datePeriod, .correctionDate {
     display: none;
+    max-width: 190px;
+
+  }
+.datePeriod > p {
+    margin: 1px;
 }
 
+.correctionDate {
+    color: red;
+    font-size: 12px;
+    font-style: italic;
+     position: absolute;
+}
 
 svg {
     border: 1px solid #dbdbdb;

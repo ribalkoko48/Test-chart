@@ -17,10 +17,12 @@ var settings = {
 //закрытие ранее отрытых выпадающих окон
 window.addEventListener('click', closeSelectTypeIfOpen);
 
-Rj.setListener('.selectType', 'click', openPropList)
-Rj.setListener('.prop_list li', 'click', handlerPropList)
+Rj.setListener('.selectType', 'click', openPropList);
+Rj.setListener('.prop_list li', 'click', handlerPropList);
 Rj.setListener('.checkBox input', 'change', changeItemsInActiveCheckbox);
 Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
+Rj.setListener('.preiodArrowWrap', 'click', H1_Button_ChangePeriod)
+
 
 /*
  Задача если вдруг ты вундыркинд и сделал все проверки
@@ -30,70 +32,143 @@ Rj.setListener('.datePeriod input', 'blur', checkAndSaveDates);
  */
 
 
-//ОБРАБОТЧИК НА БЛЮР ИНПУТОВ С ДАТОЙ - ПРОВЕРКА ПРАВИЛЬНОСТИ ВВОДА показ сообщений запись в settings 
+//ОБРАБОТЧИК НА БЛЮР ИНПУТОВ С ДАТОЙ - ПРОВЕРКА ПРАВИЛЬНОСТИ ВВОДА показ сообщений запись в settings
 
 set_DateFrom_setDateTo_In_Settings();
 
 
 function checkAndSaveDates() {
-    var number = Rj.$('.date_from').value;
-    var arrDate = number.split('.' || ',' || ':' || '-' || ';' || '/');
 
-
-    console.log();
+    var number;
     var year;
     var month;
     var day;
-    arrDate.forEach(function (iteam, i) {
+    var checkedDate = event.target.classList.value;
+
+    if (checkedDate === 'date_from') {
+        number = Rj.$('.date_from').value;
+    }
+    else {
+        number = Rj.$('.date_to').value;
+    }
+
+    var arrDateFrom = number.split('.');
+
+
+//Перебор изменяемого элемента в "Моя Дата"
+    arrDateFrom.forEach(function (iteam, i) {
         var date = new Date();
-
+//проверка число или нет
         if (!isNaN(iteam)) {
-
-
+// проверка год
             if (i == 0) {
                 if (iteam.length == 4) {
-
-                    year = iteam;
-                    console.log('первое прошло');
+                    if (iteam <= date.getFullYear()) {
+                        year = iteam;
+                    }
                 }
-
+            }
+//проверка месяц
+            if (i == 1) {
+                if (iteam.length == 2) {
+                    if (iteam <= 12 && iteam > 0) {
+                        month = iteam;
+                    }
+                }
+            }
+//проверка день
+            if (i == 2) {
+                if (iteam.length == 2) {
+                    if (iteam <= 31 && iteam > 0) {
+                        day = iteam;
+                    }
+                }
             }
         }
-
-
-        if (i == 1) {
-            if (iteam.length == 2) {
-                console.log('второе прошло');
-                month = iteam;
-            }
-
+// если чего-то нет
+        if (year === undefined || month === undefined || day === undefined) {
+            Rj.$('.correctionDate').classList.add('active')
         }
-        if (i == 2) {
-            if (iteam.length == 2) {
-                console.log('третее тоже норм');
-                day = iteam;
-            }
-
+        //если все хорошо, убираем подсказку и вложение в settings
+        else {
+            Rj.$('.correctionDate').classList.remove('active');
+            var settingDate = new Date(year, month, day)
+            settings[checkedDate] = settingDate;
         }
-        //else {
-        //    Rj.$('.correctionDate').classList.add('active')
-        //    console.log('error. Пробуй еще')
-        //}
-
-        console.log('год:' + year + ', месяц:' + month + ' день, ' + day);
     })
-
-    //Реализовать проверки
-
-
-    //Ясень пень если все гуд сообщалку срыть
-
-    //Если все гуд - создать - записать объект дата в соответствующее свойство setting
-    //Обновить даты в периоде
-
 
 }
 
+function H1_Button_ChangePeriod() {
+
+//смотрим какая кнопка нажата
+    var znak;
+    var leftOrRightButton = event.target.classList.value;
+
+    if (leftOrRightButton == 'periodArrow right') {
+        znak = '1';
+    }
+    else {
+        znak = '-1';
+
+    }
+
+
+// определение нынешнего периода
+
+    if (settings.period == 'week') {
+        var date_from = settings.date_from;
+        var date_to = settings.date_to;
+        date_from.setDate(date_from.getDate() + (znak * 7))
+        date_to.setDate(date_to.getDate() + (znak * 7))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+    }
+    else if (settings.period == 'month') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setMonth(date_from.getMonth() + (znak * 1))
+        //доделать последний день месяца
+        var month = date_from.getMonth()
+        date_to.setMonth(month, Rj.getDaysInMonth(date_from))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+    }
+    else if (settings.period == 'half-year') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setMonth(date_from.getMonth() + (znak * 6))
+        var month = date_from.getMonth()
+        month += znak * 6;
+        date_to.setMonth(month, Rj.getDaysInMonth(date_from))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+
+
+    }
+    else if (settings.period == 'year') {
+        date_from = settings.date_from;
+        date_to = settings.date_to;
+        date_from.setFullYear(date_from.getFullYear() + (znak * 1))
+        date_to.setFullYear(date_to.getFullYear() + (znak * 1))
+        Rj.$('#date_period').innerHTML = Rj.formatDate(settings.date_from) + ' - ' + Rj.formatDate(settings.date_to)
+        console.info('Начальный период')
+        console.log(date_from.getFullYear())
+        console.log(date_from.getMonth())
+        console.log(date_from.getDate())
+
+        console.info('конец')
+        console.log(date_to.getFullYear())
+        console.log(date_to.getMonth())
+        console.log(date_to.getDate())
+    }
+    else {
+        console.info('Что тут делать?')
+    }
+
+
+// выбираем число изменений периода
+
+
+    //конец функции
+}
 
 //закрытие всех окон вне диапазона кнопок
 function closeSelectTypeIfOpen(e) {
@@ -219,7 +294,6 @@ function set_DateFrom_setDateTo_In_Settings() {
 
             dateFrom.setDate(dateFrom.getDate() - (todayNumberDay - 1));
             dateTo.setDate(dateFrom.getDate() + 6);
-            //console.log(dateTo.getDate())
 
             break;
         case 'month':
