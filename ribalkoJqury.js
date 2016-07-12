@@ -35,6 +35,12 @@ var Rj = {
         return date.getFullYear() + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt(date.getDate())
     },
 
+    formatDateToURL: function (date) {
+        return this.parseInt(date.getDate()) + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt(date.getFullYear())
+    },
+
+
+
     parseInt: function (num) {
         //если число меньше десяти добавить нолик впереди а если нет то вернуть как есть
         return num < 10 ? '0' + num : num
