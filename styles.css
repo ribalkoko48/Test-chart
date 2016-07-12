@@ -128,18 +128,18 @@ span {
     position: relative;
 }
 
-.preiodArrowWrap {
+.periodArrowWrap {
     position: absolute;
     top: 2px;
     transition: opacity .5s linear;
 }
 
-.preiodArrowWrap.left {
+.periodArrowWrap.left {
     border-radius: 8px 0 0 8px;
     left: -12px;
 }
 
-.preiodArrowWrap.right {
+.periodArrowWrap.right {
     border-radius: 0 8px 8px 0;
     right: -10px;
 }
