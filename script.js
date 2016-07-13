@@ -1,35 +1,27 @@
 // внешние переменные для графика
-
-var responseData = [];
-var promt = 0;
+var Data = [];
 var daySize = 14;
 //Ключ не повторения
 var isChartInPage = false;
-// Внешние переменные
-//var NodWeek; //= document.querySelector('#chetyre1');
-//var NodMonth; //= document.querySelector('#chetyre2');
-//var NodYouDay; //= document.querySelector('#chetyre3');
-//var namber1;
-//var namber2;
 // Цвет столбцов
-var color0 = "#fafafa";
-var color1 = "#ffffff";
-var stepX;
-var stepPoint;
+var chartHeight = 494,
+    gorizont = chartHeight - 50,
+    maxHeight = gorizont - chartHeight - 50,
+    color0 = "#fafafa",
+    color1 = "#ffffff",
+    stepX,
+    stepPoint;
+
+
+var arrWith_devicesEvery_day = [];
+var arrWithout_devicesEvery_day = [];
+//scaleWithout_devices;
 // Координаты ломанной линии
-var poliLineMassiv = [];
+var poliLineMassiv_with_devices = [];
+var poliLineMassiv_without_devices = [];
 
 //Корректировка размера даты от величины диаграммы
 var stepKorekt;
-
-
-// Выключатель Checked
-//document.getElementById('namber1').addEventListener('focus', stopChecked);
-//document.getElementById('namber2').addEventListener('focus', stopChecked);
-/*function stopChecked() {
- NodWeek.checked = false;
- NodMonth.checked = false;
- }*/
 // __конец__ внешних переменных для графика
 
 
@@ -46,7 +38,7 @@ var settings = {
         activeItems: ['with_devices'] //without_devices
     },
 
-    reportType: "user",
+    reportType: "user", //bracelet
     period: "week"
 };
 
@@ -120,12 +112,14 @@ function checkAndSaveDates(e) {
     settings[checkedDate] = new Date(value);
 
     updatePeriodDates()
+    getDataFromServer()
 
     function show_message(mes) {
         var node = Rj.$('.correctionDate');
         node.classList.add('active')
         node.innerHTML = mes
     }
+
 }
 
 function H1_Button_ChangePeriod(event) {
@@ -174,6 +168,8 @@ function H1_Button_ChangePeriod(event) {
     updateDatesInputs()
     updatePeriodDates()
 
+
+    getDataFromServer()
 }
 
 function updatePeriodDates() {
@@ -186,7 +182,6 @@ function updateDatesInputs() {
 
 //закрытие всех окон вне диапазона кнопок
 function closeSelectTypeIfOpen(e) {
-    getDataFromServer()
     var target = e.target;
 
     if (!target.closest('.selectType')) {
@@ -273,6 +268,8 @@ function setInSettingsObj(e) {
     if (keyObj == 'period') {
 
         set_DateFrom_setDateTo_In_Settings()
+    } else {
+        redrawChart()
     }
 
 }
@@ -337,7 +334,6 @@ function set_DateFrom_setDateTo_In_Settings() {
 
 }
 // Добавление выбранных элементов в объект
-//
 function updateActiveCheckboxInDOM() {
 
     if (settings.braseletsCheckbox.isActive) {
@@ -359,8 +355,7 @@ function getDataFromServer() {
     var xhr = new XMLHttpRequest();
 
     var url = 'http://192.168.0.145:8008/reports/api/v1/user_analysis_report_data?&date_from=' + Rj.formatDateToURL(settings.date_from) + '&date_to=' + Rj.formatDateToURL(settings.date_to) + '&tz_seconds=10800&format=json';
-//05.01.2016
-    //11.05.2016
+
     xhr.onreadystatechange = function () {
         if (this.readyState != 4) return;
 
@@ -389,30 +384,25 @@ function getDataFromServer() {
 // ___ГРАФИК____
 function redrawChart() {
 
-    console.log(server_data)
+
+
     offFun()
 
 
-    //	namber1 = +document.getElementById('namber1').value;
-    //namber2 = +document.getElementById('namber2').value;
     stepX = 0;
     stepPoint = 0;
 
-    poliLineMassiv.length = 0;
+    poliLineMassiv_with_devices.length = 0;
+    poliLineMassiv_without_devices.length = 0;
 
 
-    for (var i = 0; i < server_data.device.length; i++) {
-        responseData.push(server_data.device[i])
-    }
-    stepKorekt = responseData.length
+
+        Data = server_data.device
 
 
-    /*  console.info('Запустилась функция отрисовки графика')
-     if (isChartInPage) {
-     console.log('нельзя рисовать дважды поэтому вышли')
-     return
-     }*/
 
+
+    stepKorekt = Data.length
 
     // Местонахождение <svg>
     var svgNod = document.querySelector('svg');
@@ -420,33 +410,61 @@ function redrawChart() {
     var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     // Перекрывающий объект для точек
     var g2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-
+    var g3 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    var scaleWith_devices = 0;
 
     // шаг
     stepPoint = 1024 / stepKorekt;
+console.log(Data)
+//определение наибольшего числа
+    for (var i = 0; i < Data.length; i++) {
+        arrWith_devicesEvery_day.push(Data[i].with_devices[settings.category])
+        arrWithout_devicesEvery_day.push(Data[i].without_devices[settings.category])
+    }
+
+
+    if (Rj.Array_max(arrWith_devicesEvery_day) > Rj.Array_max(arrWithout_devicesEvery_day)) {
+        scaleWith_devices = Rj.Array_max(arrWith_devicesEvery_day)
+    }
+    else {
+        scaleWith_devices = Rj.Array_max(arrWithout_devicesEvery_day)
+    }
+
+    console.log(scaleWith_devices)
 
 
     // Основная функция
-    for (var i = 0; i < responseData.length; i++) {
+    for (var i = 0; i < Data.length; i++) {
 
-         if (!responseData[i]) continue
+
+        console.log(settings.category)
+
+
+        var CircHeight_with_devices = Data[i].with_devices[settings.category];
+        var CircHeight_without_devices = Data[i].without_devices[settings.category];
+
 
         //Внутренние переменные
-        var CircHeight = responseData[i].totals.every_day;
+
+        console.log(CircHeight_with_devices, scaleWith_devices)
 
         // Формула определения координат кружков
-        var cyCircl = Math.round(((((CircHeight / 100) - 1) * -1) * 100) * 4.44)
+        var cyCircl_with_devices = Math.round(((((CircHeight_with_devices / 100) / (scaleWith_devices / 90) - 1) * -1) * 100) * 4.44);
+        var cyCircl_without_devices = Math.round((((((CircHeight_without_devices / 100) / (scaleWith_devices / 90)) - 1) * -1) * 100) * 4.44);
         // Какая дата? text
-        var data = responseData[i].metric_date;
+        var data = Data[i].metric_date;
 
-        poliLineMassiv.push(Math.round(( stepX + stepPoint / 2) * 100) / 100)
-        poliLineMassiv.push(cyCircl)
+        poliLineMassiv_with_devices.push(Math.round(( stepX + stepPoint / 2) * 100) / 100)
+        poliLineMassiv_with_devices.push(cyCircl_with_devices)
+        poliLineMassiv_without_devices.push(Math.round(( stepX + stepPoint / 2) * 100) / 100)
+        poliLineMassiv_without_devices.push(cyCircl_without_devices)
 
 
         // Отправка узлов в нужной очередности в Nod
         g.appendChild(addRect(i))
         g.appendChild(addSpan(i))
-        g2.appendChild(addCircl(i, cyCircl))
+        g2.appendChild(addCircl(i, cyCircl_with_devices))
+        g3.appendChild(addCircl(i, cyCircl_without_devices))
 
         // Повтор графика off
         isChartInPage = true;
@@ -457,92 +475,104 @@ function redrawChart() {
 
 
     svgNod.appendChild(g)
-    svgNod.appendChild(poliLn(i))
+    svgNod.appendChild(poliLn_with_devices(i))
+    svgNod.appendChild(poliLn_without_devices(i))
     svgNod.appendChild(g2)
-}
+    svgNod.appendChild(g3)
+
 
 // Отчиска графика (Nod)
-function offFun() {
-    var svgNod = document.querySelector('svg');
-    //Опустошили содержимое SVG
-    svgNod.innerHTML = '';
-    // Повтор графика on
-    isChartInPage = false;
-    responseData = [];
-    console.info('чистка графика')
-
-};
+    function offFun() {
+        var svgNod = document.querySelector('svg');
+        //Опустошили содержимое SVG
+        svgNod.innerHTML = '';
+        // Повтор графика on
+        isChartInPage = false;
+        console.info('чистка графика')
+        scaleWith_devices = 0;
+        arrWith_devicesEvery_day = [];
+        arrWithout_devicesEvery_day = [];
+    };
 
 //Ломанная линия координат
-function poliLn() {
+    function poliLn_with_devices() {
 
-    var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    polyline.setAttribute('fill', 'none');
-    polyline.setAttribute('stroke', '#909090');
-    polyline.setAttribute('points', poliLineMassiv);
+        var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('fill', 'none');
+        polyline.setAttribute('stroke', '#909090');
+        polyline.setAttribute('points', poliLineMassiv_with_devices);
 
-    return polyline;
-}
+        return polyline;
+    }
+
+    function poliLn_without_devices() {
+
+        var polyline2 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline2.setAttribute('fill', 'none');
+        polyline2.setAttribute('stroke', '#909090');
+        polyline2.setAttribute('points', poliLineMassiv_without_devices);
+
+
+        return polyline2;
+    }
+
 // Прямая лини горизонта
-function lineSvg(ln) {
+    function lineSvg(ln) {
 
-    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', 0);
-    line.setAttribute('y1', 444);
-    line.setAttribute('x2', stepX);
-    line.setAttribute('y2', 444);
-    line.setAttribute('stroke-width', 2);
-    line.setAttribute('stroke', "#909090");
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', 0);
+        line.setAttribute('y1', gorizont);
+        line.setAttribute('x2', stepX);
+        line.setAttribute('y2', gorizont);
+        line.setAttribute('stroke-width', 2);
+        line.setAttribute('stroke', "#909090");
 
-    return line;
-}
+        return line;
+    }
 
 // Отрисовка даты под линией горизонта
-function addSpan(i) {
-    var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    tspan.setAttribute('x', Math.round(( stepX - stepPoint / 2) * 100) / 100);
-    tspan.setAttribute('y', 469);
-    tspan.innerHTML = responseData[i].metric_date.substr(0,10).split('-').join('.');
+    function addSpan(i) {
+        var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', Math.round(( stepX - stepPoint / 2) * 100) / 100);
+        tspan.setAttribute('y', gorizont + 30);
+        tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
 
 
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', 'Roboto');
+        text.setAttribute('font-size', daySize);
+        text.setAttribute('fill', "#000000");
+        text.appendChild(tspan);
 
-    var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('font-family', 'Roboto');
-    text.setAttribute('font-size', daySize);
-    text.setAttribute('fill', "#000000");
-    text.appendChild(tspan);
-
-    return text;
-};
+        return text;
+    };
 // Отрисовка столбцов графика
-function addRect(i) {
-    //выбор цвета столбца
-    var color = i % 2 == 0 ? color0 : color1;
+    function addRect(i) {
+        //выбор цвета столбца
+        var color = i % 2 == 0 ? color0 : color1;
 
-    //формируем столбец
-    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    rect.setAttribute('x', stepX)
-    rect.setAttribute('y', 0)
-    rect.setAttribute('width', stepPoint)
-    rect.setAttribute('height', 494)
-    rect.setAttribute('fill', color)
-    stepX += stepPoint;
-    return rect;
-};
+        //формируем столбец
+        var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', stepX)
+        rect.setAttribute('y', 0)
+        rect.setAttribute('width', stepPoint)
+        rect.setAttribute('height', chartHeight)
+        rect.setAttribute('fill', color)
+        stepX += stepPoint;
+        return rect;
+    };
 // Отрисовка точек на графике
-function addCircl(i, cy) {
+    function addCircl(i, cy) {
 
-    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', Math.round(( stepX - stepPoint / 2) * 100) / 100);
-    circle.setAttribute('cy', cy);
-    circle.setAttribute('r', 5);
-    circle.setAttribute('stroke', '#1581A5');
-    circle.setAttribute('stroke-width', 2);
-    circle.setAttribute('fill', "#FFFFFF");
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', Math.round(( stepX - stepPoint / 2) * 100) / 100);
+        circle.setAttribute('cy', cy);
+        circle.setAttribute('r', 5);
+        circle.setAttribute('stroke', '#1581A5');
+        circle.setAttribute('stroke-width', 2);
+        circle.setAttribute('fill', "#FFFFFF");
 
-    return circle;
-};
-
-
-
+        return circle;
+    };
+}

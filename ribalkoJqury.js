@@ -39,6 +39,10 @@ var Rj = {
         return this.parseInt(date.getDate()) + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt(date.getFullYear())
     },
 
+    Array_max: function( array ){
+    return Math.max.apply( Math, array )
+},
+
 
 
     parseInt: function (num) {
