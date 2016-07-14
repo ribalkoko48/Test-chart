@@ -6,16 +6,15 @@ var isChartInPage = false;
 // Цвет столбцов
 var chartHeight = 494,
     gorizont = chartHeight - 50,
-    maxHeight = gorizont - chartHeight - 50,
     color0 = "#fafafa",
     color1 = "#ffffff",
     stepX,
     stepPoint;
 
-
+//массивы для определения масштаба диагарммы
 var arrWith_devicesEvery_day = [];
 var arrWithout_devicesEvery_day = [];
-//scaleWithout_devices;
+
 // Координаты ломанной линии
 var poliLineMassiv_with_devices = [];
 var poliLineMassiv_without_devices = [];
@@ -31,13 +30,14 @@ var settings = {
     category: "every_day",
     braseletsCheckbox: {
         isActive: false,
-        activeItems: ['Sport']
+        activeItems: ['Sport'],
+        allItems: ['SPORT', 'LIFE', 'LIFE01', 'LIFE05']
     },
     usersCheckbox: {
         isActive: true,
-        activeItems: ['with_devices'] //without_devices
+        activeItems: ['with_devices'],
+        allItems: ['with_devices', 'without_devices']
     },
-
     reportType: "user", //bracelet
     period: "week"
 };
@@ -121,6 +121,8 @@ function checkAndSaveDates(e) {
     }
 
 }
+
+
 
 function H1_Button_ChangePeriod(event) {
 
@@ -278,6 +280,7 @@ function setInSettingsObj(e) {
 
 function changeItemsInActiveCheckbox(e) {
 
+
     var inputName = e.currentTarget.getAttribute('name'),
         chekedInputs = document.querySelectorAll('input[name=' + inputName + ']:checked');
 
@@ -285,7 +288,11 @@ function changeItemsInActiveCheckbox(e) {
 
     chekedInputs.forEach(function (el) {
         settings[inputName].activeItems.push(el.getAttribute('value'))
+
+
     })
+ 
+
 }
 
 // Добавление объекта даты (date_from и date_to)в settings
@@ -385,9 +392,9 @@ function getDataFromServer() {
 function redrawChart() {
 
 
-
     offFun()
 
+    console.log(server_data)
 
     stepX = 0;
     stepPoint = 0;
@@ -396,10 +403,7 @@ function redrawChart() {
     poliLineMassiv_without_devices.length = 0;
 
 
-
-        Data = server_data.device
-
-
+    Data = settings.reportType == 'user' ? server_data.device : server_data.device_type;
 
 
     stepKorekt = Data.length
@@ -411,74 +415,81 @@ function redrawChart() {
     // Перекрывающий объект для точек
     var g2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     var g3 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    var scaleWith_devices = 0;
+    var scale = 0;
 
     // шаг
     stepPoint = 1024 / stepKorekt;
-console.log(Data)
-//определение наибольшего числа
+
+    var checkBoxItems = settings.reportType == 'user' ? settings.usersCheckbox.allItems : settings.braseletsCheckbox.allItems,
+        dataForPolylines = {},
+        MaxValue = 0;
+
+    //Сначала динамически создали массивы для каждого значания в чекбоксе
+    checkBoxItems.forEach(function (item) {
+        dataForPolylines[item] = []
+    })
+
+    //для каждого значания чексбокса собрали массив из объектов и записали value
     for (var i = 0; i < Data.length; i++) {
-        arrWith_devicesEvery_day.push(Data[i].with_devices[settings.category])
-        arrWithout_devicesEvery_day.push(Data[i].without_devices[settings.category])
-    }
 
+        checkBoxItems.forEach(function (item) {
+            var value = Data[i][item][settings.category];
 
-    if (Rj.Array_max(arrWith_devicesEvery_day) > Rj.Array_max(arrWithout_devicesEvery_day)) {
-        scaleWith_devices = Rj.Array_max(arrWith_devicesEvery_day)
-    }
-    else {
-        scaleWith_devices = Rj.Array_max(arrWithout_devicesEvery_day)
-    }
+            dataForPolylines[item].push({
+                value: value
+            })
 
-    console.log(scaleWith_devices)
+           if(value > MaxValue){
+               MaxValue = value
+           }
+        })
+    }
 
 
     // Основная функция
     for (var i = 0; i < Data.length; i++) {
 
-
-        console.log(settings.category)
-
-
-        var CircHeight_with_devices = Data[i].with_devices[settings.category];
-        var CircHeight_without_devices = Data[i].without_devices[settings.category];
+        checkBoxItems.forEach(function (item) {
 
 
-        //Внутренние переменные
+            var value = dataForPolylines[item][i].value,
+                cx = Math.round(( stepX + stepPoint / 2) * 100) / 100,
+                cy = Math.round(((((  value / 100) / ( MaxValue / 90) - 1) * -1) * 100) * 4.44);
 
-        console.log(CircHeight_with_devices, scaleWith_devices)
+            dataForPolylines[item][i].cx = cx
+            dataForPolylines[item][i].cy = cy
 
-        // Формула определения координат кружков
-        var cyCircl_with_devices = Math.round(((((CircHeight_with_devices / 100) / (scaleWith_devices / 90) - 1) * -1) * 100) * 4.44);
-        var cyCircl_without_devices = Math.round((((((CircHeight_without_devices / 100) / (scaleWith_devices / 90)) - 1) * -1) * 100) * 4.44);
-        // Какая дата? text
-        var data = Data[i].metric_date;
-
-        poliLineMassiv_with_devices.push(Math.round(( stepX + stepPoint / 2) * 100) / 100)
-        poliLineMassiv_with_devices.push(cyCircl_with_devices)
-        poliLineMassiv_without_devices.push(Math.round(( stepX + stepPoint / 2) * 100) / 100)
-        poliLineMassiv_without_devices.push(cyCircl_without_devices)
+            g2.appendChild(addCircl(cx, cy, item))
+        })
 
 
         // Отправка узлов в нужной очередности в Nod
         g.appendChild(addRect(i))
         g.appendChild(addSpan(i))
-        g2.appendChild(addCircl(i, cyCircl_with_devices))
-        g3.appendChild(addCircl(i, cyCircl_without_devices))
+
 
         // Повтор графика off
-        isChartInPage = true;
+
 
     }
 
     g.appendChild(lineSvg(i))
 
-
     svgNod.appendChild(g)
-    svgNod.appendChild(poliLn_with_devices(i))
-    svgNod.appendChild(poliLn_without_devices(i))
+
+    checkBoxItems.forEach(function(item){
+
+        var coordsArray = dataForPolylines[item].map(function(el){
+            return el.cx + ',' + el.cy
+        });
+
+         svgNod.appendChild(poliLn( coordsArray, item ))
+    })
+
     svgNod.appendChild(g2)
     svgNod.appendChild(g3)
+
+    isChartInPage = true;
 
 
 // Отчиска графика (Nod)
@@ -488,33 +499,24 @@ console.log(Data)
         svgNod.innerHTML = '';
         // Повтор графика on
         isChartInPage = false;
-        console.info('чистка графика')
-        scaleWith_devices = 0;
+
+        scale = 0;
         arrWith_devicesEvery_day = [];
         arrWithout_devicesEvery_day = [];
     };
 
 //Ломанная линия координат
-    function poliLn_with_devices() {
+    function poliLn(array, className) {
 
         var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+         polyline.setAttribute('class', className);
         polyline.setAttribute('fill', 'none');
         polyline.setAttribute('stroke', '#909090');
-        polyline.setAttribute('points', poliLineMassiv_with_devices);
+        polyline.setAttribute('points', array);
 
         return polyline;
     }
 
-    function poliLn_without_devices() {
-
-        var polyline2 = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-        polyline2.setAttribute('fill', 'none');
-        polyline2.setAttribute('stroke', '#909090');
-        polyline2.setAttribute('points', poliLineMassiv_without_devices);
-
-
-        return polyline2;
-    }
 
 // Прямая лини горизонта
     function lineSvg(ln) {
@@ -563,16 +565,19 @@ console.log(Data)
         return rect;
     };
 // Отрисовка точек на графике
-    function addCircl(i, cy) {
+    function addCircl(cx, cy, className) {
 
         var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', Math.round(( stepX - stepPoint / 2) * 100) / 100);
+        circle.setAttribute('class', className);
+        circle.setAttribute('cx', Math.round(cx));
         circle.setAttribute('cy', cy);
-        circle.setAttribute('r', 5);
+        circle.setAttribute('r', 3);
         circle.setAttribute('stroke', '#1581A5');
         circle.setAttribute('stroke-width', 2);
         circle.setAttribute('fill', "#FFFFFF");
 
         return circle;
     };
+
 }
+

@@ -102,7 +102,7 @@ span {
     z-index: 4;
     margin-top: 15px;
     left: 0;
-    border-radius: none;
+   /* border-radius: none;*/
     box-shadow: 0 0 5px rgba(0, 0, 0, .1);
     cursor: pointer;
     list-style: none;
@@ -204,3 +204,28 @@ svg {
 .active {
     display: block;
 }
+.LIFE {
+
+}
+
+
+
+circle.without_devices, circle.with_devices, circle.SPORT, circle.LIFE, circle.LIFE01, circle.LIFE05 {
+    fill: red;
+}
+
+polyline.without_devices, polyline.SPORT   {
+    stroke: green;
+}
+
+polyline.with_devices ,polyline.LIFE {
+    stroke: gold;
+}
+
+polyline.LIFE01 {
+    stroke: grey;
+}
+polyline.LIFE05 {
+    stroke: pink;
+}
+
