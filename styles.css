@@ -20,8 +20,9 @@ body {
 .checkBox {
     display: none;
     text-align: left;
-    margin-left: 10px;
-}
+    margin-left: 5px;
+    float: left;
+    }
 
 label {
     display: block;
@@ -201,31 +202,46 @@ svg {
     border: 1px solid #dbdbdb;
 }
 
+circle, polyline, hr{
+    display: none;
+}
+
 .active {
     display: block;
 }
-.LIFE {
-
-}
-
-
 
 circle.without_devices, circle.with_devices, circle.SPORT, circle.LIFE, circle.LIFE01, circle.LIFE05 {
-    fill: red;
+    fill: aqua;
 }
 
-polyline.without_devices, polyline.SPORT   {
+polyline.without_devices, polyline.SPORT, hr.without_devices, hr.SPORT {
     stroke: green;
+ background-color: green;
+     color: green;
 }
 
-polyline.with_devices ,polyline.LIFE {
+polyline.with_devices ,polyline.LIFE, hr.LIFE, hr.with_devices {
     stroke: gold;
+    background-color: gold;
+     color: gold;
 }
 
-polyline.LIFE01 {
+polyline.LIFE01, hr.LIFE01 {
     stroke: grey;
+     background-color: grey;
+     color: grey;
 }
-polyline.LIFE05 {
+polyline.LIFE05, hr.LIFE05 {
     stroke: pink;
+     background-color: pink;
+     color: pink;
 }
+
+ hr {
+    border: none;
+    height: 2px;
+     width: 15px;
+     margin-right: -25px;
+float:right;
+   }
 

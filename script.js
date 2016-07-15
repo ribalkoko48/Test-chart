@@ -30,7 +30,7 @@ var settings = {
     category: "every_day",
     braseletsCheckbox: {
         isActive: false,
-        activeItems: ['Sport'],
+        activeItems: ['SPORT'],
         allItems: ['SPORT', 'LIFE', 'LIFE01', 'LIFE05']
     },
     usersCheckbox: {
@@ -55,7 +55,6 @@ Rj.setListener('.periodArrowWrap', 'click', H1_Button_ChangePeriod)
 set_DateFrom_setDateTo_In_Settings();
 
 getDataFromServer();
-
 
 function checkAndSaveDates(e) {
     Rj.$('.correctionDate').classList.remove('active');
@@ -123,7 +122,6 @@ function checkAndSaveDates(e) {
 }
 
 
-
 function H1_Button_ChangePeriod(event) {
 
     //смотрим какая кнопка нажата и вычесляем туда сюда куда мотать
@@ -187,7 +185,9 @@ function closeSelectTypeIfOpen(e) {
     var target = e.target;
 
     if (!target.closest('.selectType')) {
+
         closeAllPropLists()
+
     }
 
 }
@@ -220,7 +220,8 @@ function handlerPropList(e) {
 
     setPropListValue(e);
     setInSettingsObj(e)
-
+    console.log('получаем данные')
+    getDataFromServer()
 }
 
 // замена подписи на кнопке
@@ -291,7 +292,8 @@ function changeItemsInActiveCheckbox(e) {
 
 
     })
- 
+
+    checkAndShow(e)
 
 }
 
@@ -387,24 +389,45 @@ function getDataFromServer() {
 
     xhr.send();
 }
+function getDateCollection(){
+    
+    
+    var dateCollection = [],
+        trashDate = new Date(settings.date_from);
+    
+    var howManyDays = Math.ceil((settings.date_to - settings.date_from) / 1000 / 60 / 60 / 24) +1;
 
+    for(var i = 0; i < howManyDays; i++){
+        i && trashDate.setDate(trashDate.getDate() +1 )
+
+        dateCollection.push({
+            metric_date: Rj.formatDate(trashDate, '-')
+        })
+    }
+    
+
+     //Data = settings.reportType == 'user' ? server_data.device : server_data.device_type;
+    
+    return dateCollection
+}
 // ___ГРАФИК____
 function redrawChart() {
 
 
     offFun()
+    
+    
+    Data = getDateCollection()
 
-    console.log(server_data)
+    console.log(Data)
 
+    
+    
     stepX = 0;
     stepPoint = 0;
 
     poliLineMassiv_with_devices.length = 0;
     poliLineMassiv_without_devices.length = 0;
-
-
-    Data = settings.reportType == 'user' ? server_data.device : server_data.device_type;
-
 
     stepKorekt = Data.length
 
@@ -420,7 +443,8 @@ function redrawChart() {
     // шаг
     stepPoint = 1024 / stepKorekt;
 
-    var checkBoxItems = settings.reportType == 'user' ? settings.usersCheckbox.allItems : settings.braseletsCheckbox.allItems,
+    var activeCheckbox = settings.reportType == 'user' ? settings.usersCheckbox : settings.braseletsCheckbox,
+        checkBoxItems = activeCheckbox.allItems,
         dataForPolylines = {},
         MaxValue = 0;
 
@@ -439,18 +463,17 @@ function redrawChart() {
                 value: value
             })
 
-           if(value > MaxValue){
-               MaxValue = value
-           }
+            if (value > MaxValue) {
+                MaxValue = value
+            }
         })
     }
 
 
     // Основная функция
-    for (var i = 0; i < Data.length; i++) {
+    for (var i = 0; i <  Data.length; i++) {
 
         checkBoxItems.forEach(function (item) {
-
 
             var value = dataForPolylines[item][i].value,
                 cx = Math.round(( stepX + stepPoint / 2) * 100) / 100,
@@ -459,16 +482,11 @@ function redrawChart() {
             dataForPolylines[item][i].cx = cx
             dataForPolylines[item][i].cy = cy
 
-            g2.appendChild(addCircl(cx, cy, item))
+            g2.appendChild(addCircl(cx, cy, getClassName(item)))
         })
-
-
-        // Отправка узлов в нужной очередности в Nod
+// Отправка узлов в нужной очередности в Nod
         g.appendChild(addRect(i))
         g.appendChild(addSpan(i))
-
-
-        // Повтор графика off
 
 
     }
@@ -477,13 +495,13 @@ function redrawChart() {
 
     svgNod.appendChild(g)
 
-    checkBoxItems.forEach(function(item){
+    checkBoxItems.forEach(function (item) {
 
-        var coordsArray = dataForPolylines[item].map(function(el){
+        var coordsArray = dataForPolylines[item].map(function (el) {
             return el.cx + ',' + el.cy
         });
 
-         svgNod.appendChild(poliLn( coordsArray, item ))
+        svgNod.appendChild(poliLn(coordsArray, getClassName(item)))
     })
 
     svgNod.appendChild(g2)
@@ -491,6 +509,10 @@ function redrawChart() {
 
     isChartInPage = true;
 
+
+    function getClassName(item) {
+        return Rj.findInArray(activeCheckbox.activeItems, item) ? item + ' active' : item;
+    }
 
 // Отчиска графика (Nod)
     function offFun() {
@@ -509,7 +531,7 @@ function redrawChart() {
     function poliLn(array, className) {
 
         var polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-         polyline.setAttribute('class', className);
+        polyline.setAttribute('class', className);
         polyline.setAttribute('fill', 'none');
         polyline.setAttribute('stroke', '#909090');
         polyline.setAttribute('points', array);
@@ -537,8 +559,16 @@ function redrawChart() {
         var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttribute('x', Math.round(( stepX - stepPoint / 2) * 100) / 100);
         tspan.setAttribute('y', gorizont + 30);
-        tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
-
+        
+        if (settings.period == "week") {
+            tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
+        }
+        else if (settings.period == "month" || settings.period == "custom") {
+            tspan.innerHTML = Data[i].metric_date.substr(5, 5).split('-').join('.');
+        }
+        else {
+            tspan.innerHTML = '';
+        }
 
         var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('text-anchor', 'middle');
@@ -571,7 +601,7 @@ function redrawChart() {
         circle.setAttribute('class', className);
         circle.setAttribute('cx', Math.round(cx));
         circle.setAttribute('cy', cy);
-        circle.setAttribute('r', 3);
+        circle.setAttribute('r', 2);
         circle.setAttribute('stroke', '#1581A5');
         circle.setAttribute('stroke-width', 2);
         circle.setAttribute('fill', "#FFFFFF");
@@ -581,3 +611,20 @@ function redrawChart() {
 
 }
 
+
+//Орисовка выбранных в checkBox линий
+function checkAndShow(e) {
+    var className = e.target.value,
+        elements = document.querySelectorAll('.' + className);
+
+    if (e.target.checked) {
+        elements.forEach(function (el) {
+            el.classList.add('active')
+        })
+    } else {
+        elements.forEach(function (el) {
+            el.classList.remove('active')
+        })
+    }
+
+}

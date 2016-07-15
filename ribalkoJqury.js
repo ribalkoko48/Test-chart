@@ -15,6 +15,14 @@ var Rj = {
         return resultDate.getDate()
 
     },
+    
+    findInArray: function(arr, el){
+        var res = arr.find(function(item){
+                return item == el
+            });
+        
+        return !!res
+    },
 
 
     /*
@@ -31,8 +39,9 @@ var Rj = {
         return allElements;
     },
 
-    formatDate: function (date) {
-        return date.getFullYear() + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt(date.getDate())
+    formatDate: function (date, replacer) {
+        if(!replacer) replacer = '.'
+        return date.getFullYear() + replacer + this.parseInt(date.getMonth() + 1) + replacer + this.parseInt(date.getDate())
     },
 
     formatDateToURL: function (date) {
