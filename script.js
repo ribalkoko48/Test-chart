@@ -139,10 +139,8 @@ function H1_Button_ChangePeriod(event) {
             break;
         case 'month':
             date_from.setMonth(date_from.getMonth() + (factor * 1))
-            //доделать последний день месяца
             var month = date_from.getMonth();
-
-            date_to.setMonth(month, Rj.getDaysInMonth(date_from))
+            date_to.setFullYear(date_from.getFullYear(), date_from.getMonth(), Rj.getDaysInMonth(date_from))
             break;
         case 'half-year':
             date_from.setMonth(date_from.getMonth() + (factor * 6))
@@ -278,7 +276,6 @@ function setInSettingsObj(e) {
 }
 
 // Добавление checkbox в разделе "Вид отчета" в объект settings={}
-
 function changeItemsInActiveCheckbox(e) {
 
 
@@ -315,8 +312,7 @@ function set_DateFrom_setDateTo_In_Settings() {
             break;
         case 'month':
             dateFrom.setDate(1);
-            console.info('ошибка на переходе года назад')
-            dateTo.setDate(Rj.getDaysInMonth(dateFrom))
+            dateTo.setDate(dateFrom.getDate() + (Rj.getDaysInMonth(dateFrom) - 1))
 
             break;
         case 'half-year':
@@ -358,7 +354,7 @@ function updateActiveCheckboxInDOM() {
     }
 
 }
-
+// Взятие данных с сервера
 function getDataFromServer() {
 
     var xhr = new XMLHttpRequest();
@@ -389,25 +385,65 @@ function getDataFromServer() {
 
     xhr.send();
 }
-function getDateCollection(){
-    
-    
-    var dateCollection = [],
-        trashDate = new Date(settings.date_from);
-    
-    var howManyDays = Math.ceil((settings.date_to - settings.date_from) / 1000 / 60 / 60 / 24) +1;
+// Нужная коллекция для отрисовки графика с пустыми значениями
+function getDateCollection() {
 
-    for(var i = 0; i < howManyDays; i++){
-        i && trashDate.setDate(trashDate.getDate() +1 )
+
+    var dateCollection = [], //[ {metric_date: ...} , {metric_date: ...} , {metric_date: ...} , {metric_date: ...}]
+        trashDate = new Date(settings.date_from);
+
+    var howManyDays = Math.ceil((settings.date_to - settings.date_from) / 1000 / 60 / 60 / 24) + 1;
+
+
+    //ФОРМИРУЕМ КОЛЛЕКЦИЮ С ДАТАМИ
+    for (var i = 0; i < howManyDays; i++) {
+
+
+        if (i !== 0) {//если i ноль то мы не прибавим +1
+            trashDate.setDate(trashDate.getDate() + 1) //Установка metric date для первого объекта так как первый metric date не +1
+        }
+
 
         dateCollection.push({
-            metric_date: Rj.formatDate(trashDate, '-')
+            metric_date: Rj.formatDate(trashDate, '-') //2016-07-16
         })
     }
-    
 
-     //Data = settings.reportType == 'user' ? server_data.device : server_data.device_type;
-    
+    server_data.device.forEach(function (item, i) {
+        item.metric_date.substr(0, 10)
+    })
+
+    //НАПОЛНЯЕМ
+    dateCollection.forEach(function (date, i) {
+
+        server_data.device.forEach(function (el) {
+
+            if (el.metric_date.substr(0, 10) === date.metric_date) {
+                dateCollection[i].with_devices = el.with_devices
+                dateCollection[i].without_devices = el.without_devices
+
+            }
+
+        })
+
+        server_data.device_type.forEach(function (el) {
+
+            if (el.metric_date.substr(0, 10) === date.metric_date) {
+
+                dateCollection[i].SPORT = el.SPORT
+                dateCollection[i].LIFE = el.LIFE
+                dateCollection[i].LIFE01 = el.LIFE01
+                dateCollection[i].LIFE05 = el.LIFE05
+
+            }
+
+        })
+
+
+    })
+
+    //Data = settings.reportType == 'user' ? server_data.device : server_data.device_type;
+
     return dateCollection
 }
 // ___ГРАФИК____
@@ -415,14 +451,13 @@ function redrawChart() {
 
 
     offFun()
-    
-    
+
+
     Data = getDateCollection()
 
     console.log(Data)
 
-    
-    
+
     stepX = 0;
     stepPoint = 0;
 
@@ -457,36 +492,50 @@ function redrawChart() {
     for (var i = 0; i < Data.length; i++) {
 
         checkBoxItems.forEach(function (item) {
-            var value = Data[i][item][settings.category];
 
-            dataForPolylines[item].push({
-                value: value
-            })
+            if (!Data[i][item]) {
+                return;
+            }
+            var value = Data[i][item][settings.category];
 
             if (value > MaxValue) {
                 MaxValue = value
             }
+
         })
     }
 
 
     // Основная функция
-    for (var i = 0; i <  Data.length; i++) {
+    for (var i = 0; i < Data.length; i++) {
 
         checkBoxItems.forEach(function (item) {
 
-            var value = dataForPolylines[item][i].value,
+            if (!Data[i][item]) {
+                return;
+            }
+            var value = Data[i][item][settings.category],
                 cx = Math.round(( stepX + stepPoint / 2) * 100) / 100,
                 cy = Math.round(((((  value / 100) / ( MaxValue / 90) - 1) * -1) * 100) * 4.44);
 
-            dataForPolylines[item][i].cx = cx
-            dataForPolylines[item][i].cy = cy
+            dataForPolylines[item].push({
+                value: value,
+                cx: cx,
+                cy: cy
+
+            })
 
             g2.appendChild(addCircl(cx, cy, getClassName(item)))
+            g2.appendChild(addSpanOnCircle(i, item, cy, getClassName(item)))
         })
 // Отправка узлов в нужной очередности в Nod
+
+
         g.appendChild(addRect(i))
         g.appendChild(addSpan(i))
+
+
+        stepX += stepPoint;
 
 
     }
@@ -557,28 +606,36 @@ function redrawChart() {
 // Отрисовка даты под линией горизонта
     function addSpan(i) {
         var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttribute('x', Math.round(( stepX - stepPoint / 2) * 100) / 100);
+        tspan.setAttribute('x', Math.round(( stepX + stepPoint / 2) * 100) / 100);
         tspan.setAttribute('y', gorizont + 30);
-        
+        tspan.setAttribute('class', 'active')
+
         if (settings.period == "week") {
             tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
         }
-        else if (settings.period == "month" || settings.period == "custom") {
+        else if (settings.period == "month") {
             tspan.innerHTML = Data[i].metric_date.substr(5, 5).split('-').join('.');
+            daySize = 10;
         }
         else {
             tspan.innerHTML = '';
         }
 
-        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-family', 'Roboto');
-        text.setAttribute('font-size', daySize);
-        text.setAttribute('fill', "#000000");
-        text.appendChild(tspan);
-
-        return text;
+        return textForDiagram(tspan, daySize);
     };
+
+//Отрсовка подписей точек
+    function addSpanOnCircle(i, item, cy, className) {
+        var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', Math.round(( stepX + stepPoint / 2) * 100) / 100);
+        tspan.setAttribute('y', cy - 10);
+        tspan.setAttribute('class', className);
+
+        tspan.innerHTML = Data[i][item][settings.category];
+
+        return textForDiagram(tspan, daySize);
+    }
+
 // Отрисовка столбцов графика
     function addRect(i) {
         //выбор цвета столбца
@@ -591,7 +648,6 @@ function redrawChart() {
         rect.setAttribute('width', stepPoint)
         rect.setAttribute('height', chartHeight)
         rect.setAttribute('fill', color)
-        stepX += stepPoint;
         return rect;
     };
 // Отрисовка точек на графике
@@ -627,4 +683,16 @@ function checkAndShow(e) {
         })
     }
 
+}
+
+function textForDiagram(tspan, daySize) {
+
+    var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-family', 'Roboto');
+    text.setAttribute('font-size', daySize);
+    text.setAttribute('fill', "#000000");
+    text.appendChild(tspan);
+
+    return text;
 }
