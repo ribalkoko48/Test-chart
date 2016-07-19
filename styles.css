@@ -202,7 +202,7 @@ svg {
     border: 1px solid #dbdbdb;
 }
 
-circle, polyline, hr, tspan{
+circle, polyline, hr, tspan, .braceletChecked, .userChecked,  .tooltip .without_devices, .tooltip .with_devices, .tooltip .SPORT, .tooltip .LIFE, .tooltip .LIFE01, .tooltip .LIFE05{
     display: none;
 }
 
@@ -244,4 +244,42 @@ polyline.LIFE05, hr.LIFE05 {
      margin-right: -25px;
 float:right;
    }
+
+
+ .dayGroup rect {
+     opacity: 0;
+ }
+
+.dayGroup circle, .metricDate, .valueOnCircle, .tooltip {
+    display: none;
+}
+
+.dayGroup:hover circle.active, .tooltip.active {
+    display: block;
+}
+
+.dayGroup:hover .metricDate {
+    display: block;
+}
+
+.dayGroup:hover .valueOnCircle.active, .tooltip .without_devices.active,  .tooltip .with_devices.active,  .tooltip .SPORT.active,  .tooltip .LIFE.active,  .tooltip .LIFE01.active,  .tooltip .LIFE05.active {
+    display: block;
+}
+.dayGroup:hover rect {
+    opacity: 0.08;
+}
+
+.tooltip{
+  /*  display: none;*/
+    background: white;
+    position: absolute;
+    padding: 15px;
+    box-shadow: 1px 3px 4px rgba(0,0,0,0.16);
+}
+
+/*
+.tooltip.active{
+    display: block;
+}
+*/
 

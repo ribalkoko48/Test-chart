@@ -1,6 +1,6 @@
 // внешние переменные для графика
 var Data = [];
-var daySize = 14;
+var daySize = 17;
 //Ключ не повторения
 var isChartInPage = false;
 // Цвет столбцов
@@ -509,6 +509,12 @@ function redrawChart() {
     // Основная функция
     for (var i = 0; i < Data.length; i++) {
 
+
+        var dayGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        dayGroup.setAttribute('class', 'dayGroup');
+
+        dayGroup.appendChild(addRect(i, 'transparent'))
+
         checkBoxItems.forEach(function (item) {
 
             if (!Data[i][item]) {
@@ -525,17 +531,89 @@ function redrawChart() {
 
             })
 
-            g2.appendChild(addCircl(cx, cy, getClassName(item)))
-            g2.appendChild(addSpanOnCircle(i, item, cy, getClassName(item)))
+            //!!!Передавать value в параметры кружку и вставлять в нем как аттрибут data-value
+            dayGroup.appendChild(addCircl(cx, cy, getClassName(item)))
+            dayGroup.appendChild(addSpanOnCircle(i, item, cy, getClassName(item) + ' valueOnCircle'))
+
+            /* g2.appendChild()
+             g2.appendChild()*/
         })
 // Отправка узлов в нужной очередности в Nod
 
+        dayGroup.appendChild(addMetricDate(i, 'metricDate'))
 
         g.appendChild(addRect(i))
-        g.appendChild(addSpan(i))
+        g2.appendChild(dayGroup)
 
 
         stepX += stepPoint;
+
+/*
+
+        //ЛОГИКА ПОКАЗА ПОДСКАЗКИ TOOLTIP
+        //открытие
+        dayGroup.addEventListener('mouseenter', function (e) {
+            var rectCoords = e.target.getBoundingClientRect();
+
+
+            //!!!Брать все кружки брать их data-value искать в подсказке по одноменному классу дивы и вставлять в них value
+
+            var tooltip = Rj.$('.tooltip');
+
+            tooltip.classList.add('active')
+
+            if (settings.reportType == "user"){
+                Rj.$('.userChecked').classList.add('active')
+                 Rj.$('.braceletChecked').classList.remove('active')
+            }
+            else {
+                Rj.$('.userChecked').classList.remove('active')
+                 Rj.$('.braceletChecked').classList.add('active')
+            }
+
+                      //передача даты в "окно-подсказка"
+            tooltip.querySelector('.tooltipMetricDate span').innerHTML = e.target.querySelector('.metricDate').innerHTML
+            if (!!e.target.querySelector('.with_devices.valueOnCircle')) {
+                tooltip.querySelector('.with_devices  span').innerHTML = e.target.querySelector('.with_devices.valueOnCircle').innerHTML
+            }
+            else {
+                tooltip.querySelector('.with_devices  span').innerHTML = ' ';
+            }
+            if (!!e.target.querySelector('.without_devices.valueOnCircle')) {
+                tooltip.querySelector('.without_devices  span').innerHTML = e.target.querySelector('.without_devices.valueOnCircle').innerHTML
+            } else {
+                tooltip.querySelector('.without_devices  span').innerHTML = ' ';
+            }
+            if (!!e.target.querySelector('.SPORT.valueOnCircle')) {
+                tooltip.querySelector('.SPORT  span').innerHTML = e.target.querySelector('.SPORT.valueOnCircle').innerHTML
+            } else {
+                tooltip.querySelector('.SPORT  span').innerHTML = ' ';
+            }
+            if (!!e.target.querySelector('.LIFE.valueOnCircle')) {
+                tooltip.querySelector('.LIFE  span').innerHTML = e.target.querySelector('.LIFE.valueOnCircle').innerHTML
+            } else {
+                tooltip.querySelector('.LIFE  span').innerHTML = ' ';
+            }
+            if (!!e.target.querySelector('.SPORT.valueOnCircle')) {
+                tooltip.querySelector('.LIFE01  span').innerHTML = e.target.querySelector('.LIFE01.valueOnCircle').innerHTML
+            } else {
+                tooltip.querySelector('.LIFE01  span').innerHTML = ' ';
+            }
+
+            if (!!e.target.querySelector('.LIFE05.valueOnCircle')) {
+                tooltip.querySelector('.LIFE05  span').innerHTML = e.target.querySelector('.LIFE05.valueOnCircle').innerHTML
+            } else {
+                tooltip.querySelector('.LIFE05  span').innerHTML = ' ';
+            }
+//конец работы с "окном-подсказказок"
+            tooltip.style.left = rectCoords.left
+        })
+
+        //закрытие
+        dayGroup.addEventListener('mouseleave', function (e) {
+            Rj.$('.tooltip').classList.remove('active')
+        })
+*/
 
 
     }
@@ -543,6 +621,8 @@ function redrawChart() {
     g.appendChild(lineSvg(i))
 
     svgNod.appendChild(g)
+    svgNod.appendChild(g2)
+    svgNod.appendChild(g3)
 
     checkBoxItems.forEach(function (item) {
 
@@ -553,8 +633,6 @@ function redrawChart() {
         svgNod.appendChild(poliLn(coordsArray, getClassName(item)))
     })
 
-    svgNod.appendChild(g2)
-    svgNod.appendChild(g3)
 
     isChartInPage = true;
 
@@ -604,22 +682,14 @@ function redrawChart() {
     }
 
 // Отрисовка даты под линией горизонта
-    function addSpan(i) {
+    function addMetricDate(i, className) {
         var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttribute('x', Math.round(( stepX + stepPoint / 2) * 100) / 100);
         tspan.setAttribute('y', gorizont + 30);
-        tspan.setAttribute('class', 'active')
+        tspan.setAttribute('class', 'active ' + className)
+        tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
 
-        if (settings.period == "week") {
-            tspan.innerHTML = Data[i].metric_date.substr(0, 10).split('-').join('.');
-        }
-        else if (settings.period == "month") {
-            tspan.innerHTML = Data[i].metric_date.substr(5, 5).split('-').join('.');
-            daySize = 10;
-        }
-        else {
-            tspan.innerHTML = '';
-        }
+
 
         return textForDiagram(tspan, daySize);
     };
@@ -637,7 +707,8 @@ function redrawChart() {
     }
 
 // Отрисовка столбцов графика
-    function addRect(i) {
+    function addRect(i, transparent) {
+
         //выбор цвета столбца
         var color = i % 2 == 0 ? color0 : color1;
 
@@ -647,9 +718,13 @@ function redrawChart() {
         rect.setAttribute('y', 0)
         rect.setAttribute('width', stepPoint)
         rect.setAttribute('height', chartHeight)
-        rect.setAttribute('fill', color)
+        rect.setAttribute('fill', transparent ? '#000000' : color)
+
+
         return rect;
     };
+
+
 // Отрисовка точек на графике
     function addCircl(cx, cy, className) {
 
@@ -657,7 +732,7 @@ function redrawChart() {
         circle.setAttribute('class', className);
         circle.setAttribute('cx', Math.round(cx));
         circle.setAttribute('cy', cy);
-        circle.setAttribute('r', 2);
+        circle.setAttribute('r', 4);
         circle.setAttribute('stroke', '#1581A5');
         circle.setAttribute('stroke-width', 2);
         circle.setAttribute('fill', "#FFFFFF");
