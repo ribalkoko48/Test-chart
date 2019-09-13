@@ -1,8 +1,8 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Test chart</title>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <title>Title</title>
     <link href="./styles.css" rel="stylesheet">
 </head>
 <body>
@@ -34,7 +34,7 @@
                 <input type="text" class="date_from" size="10">
                 <p>по</p>
                 <input type="text" class="date_to" size="10">
-                <p class = 'correctionDate'> <span>не правильный формат даты.<br> * Нужно вводить: ГГГГ.ММ.ДД</span> </p>
+                <p class='correctionDate'><span>не правильный формат даты.<br> * Нужно вводить: ГГГГ.ММ.ДД</span></p>
             </div>
         </div>
         <div class="col2">
@@ -48,24 +48,36 @@
             </div>
             <div class="checkBox" id="checkboxForBraceletModels">
                 <div>
-                    <label><input name="braseletsCheckbox" type="checkbox" value="SPORT" checked/>Sport<hr class="SPORT active"></label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="SPORT" checked/>Sport
+                        <hr class="SPORT active">
+                    </label>
                 </div>
                 <div>
-                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE">Life<hr class="LIFE"></label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE">Life
+                        <hr class="LIFE">
+                    </label>
                 </div>
                 <div>
-                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE01">Life-01<hr class="LIFE01"></label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE01">Life-01
+                        <hr class="LIFE01">
+                    </label>
                 </div>
                 <div>
-                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE05">Life-05<hr class="LIFE05"></label>
+                    <label><input name="braseletsCheckbox" type="checkbox" value="LIFE05">Life-05
+                        <hr class="LIFE05">
+                    </label>
                 </div>
             </div>
-            <div class="checkBox active" id="checkboxForUsersType" >
+            <div class="checkBox active" id="checkboxForUsersType">
                 <div>
-                    <label><input name="usersCheckbox" type="checkbox" value="with_devices" checked/>Пользователи с браслетом <hr class="with_devices active"> </label>
+                    <label><input name="usersCheckbox" type="checkbox" value="with_devices" checked/>Пользователи с браслетом
+                        <hr class="with_devices active">
+                    </label>
                 </div>
                 <div>
-                    <label><input name="usersCheckbox" type="checkbox" value="without_devices">Пользователи без браслета<hr class="without_devices"></label>
+                    <label><input name="usersCheckbox" type="checkbox" value="without_devices">Пользователи без браслета
+                        <hr class="without_devices">
+                    </label>
                 </div>
             </div>
         </div>
@@ -102,20 +114,22 @@
         <svg class="svgClass" width="100%" height="100%" viewBox="0 0 1024 494" xmlns="http://www.w3.org/2000/svg">
         </svg>
         <div class="tooltip">
-                        <div class="toolTipMetricDate">Дата - <span> </span></div><br>
-              <div class="braceletChecked">
-            <div class="SPORT active">Sport - <span> </span></div>
-            <div class="LIFE">Life - <span> </span></div>
-             <div class="LIFE01">Life01 - <span> </span></div>
-            <div class="LIFE05">Life05 - <span> </span></div>
+            <div class="toolTipMetricDate">Дата - <span> </span></div>
+            <br>
+            <div class="braceletChecked">
+                <div class="SPORT active">Sport - <span> </span></div>
+                <div class="LIFE">Life - <span> </span></div>
+                <div class="LIFE01">Life01 - <span> </span></div>
+                <div class="LIFE05">Life05 - <span> </span></div>
             </div>
             <div class="userChecked">
-             <div class="with_devices active">С браслетами - <span> </span></div>
-            <div class="without_devices">Без браслетов - <span> </span></div>
+                <div class="with_devices active">С браслетами - <span> </span></div>
+                <div class="without_devices">Без браслетов - <span> </span></div>
             </div>
-    </div>
+        </div>
 
-    <!-- конец обертки -->
+        <!-- конец обертки -->
+    </div>
 </div>
 
 <script type="text/javascript" src="ribalkoJqury.js"></script>

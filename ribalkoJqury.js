@@ -15,12 +15,12 @@ var Rj = {
         return resultDate.getDate()
 
     },
-    
+
     findInArray: function(arr, el){
         var res = arr.find(function(item){
                 return item == el
             });
-        
+
         return !!res
     },
 
@@ -47,12 +47,6 @@ var Rj = {
     formatDateToURL: function (date) {
         return this.parseInt(date.getDate()) + '.' + this.parseInt(date.getMonth() + 1) + '.' + this.parseInt(date.getFullYear())
     },
-
-    Array_max: function( array ){
-    return Math.max.apply( Math, array )
-},
-
-
 
     parseInt: function (num) {
         //если число меньше десяти добавить нолик впереди а если нет то вернуть как есть

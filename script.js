@@ -380,7 +380,6 @@ function getDataFromServer() {
         redrawChart()
     }
 
-
     xhr.open('GET', url, true);
 
     xhr.send();
